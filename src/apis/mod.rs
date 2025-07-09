@@ -1,6 +1,7 @@
 use std::error;
 use std::fmt;
 
+#[cfg(not(target_family = "wasm"))]
 #[derive(Debug, Clone)]
 pub struct ResponseContent<T> {
     pub status: reqwest::StatusCode,
@@ -8,6 +9,15 @@ pub struct ResponseContent<T> {
     pub entity: Option<T>,
 }
 
+#[cfg(target_family = "wasm")]
+#[derive(Debug, Clone)]
+pub struct ResponseContent<T> {
+    pub status: u16,
+    pub content: String,
+    pub entity: Option<T>,
+}
+
+#[cfg(not(target_family = "wasm"))]
 #[derive(Debug)]
 pub enum Error<T> {
     Reqwest(reqwest::Error),
@@ -16,7 +26,17 @@ pub enum Error<T> {
     ResponseError(ResponseContent<T>),
 }
 
-impl <T> fmt::Display for Error<T> {
+#[cfg(target_family = "wasm")]
+#[derive(Debug)]
+pub enum Error<T> {
+    Js(wasm_bindgen::JsValue),
+    Serde(serde_json::Error),
+    Io(std::io::Error),
+    ResponseError(ResponseContent<T>),
+}
+
+#[cfg(not(target_family = "wasm"))]
+impl<T> fmt::Display for Error<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
             Error::Reqwest(e) => ("reqwest", e.to_string()),
@@ -28,7 +48,21 @@ impl <T> fmt::Display for Error<T> {
     }
 }
 
-impl <T: fmt::Debug> error::Error for Error<T> {
+#[cfg(target_family = "wasm")]
+impl<T> fmt::Display for Error<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let (module, e) = match self {
+            Error::Js(e) => ("wasm_bindgen", format!("{:?}", e)),
+            Error::Serde(e) => ("serde", e.to_string()),
+            Error::Io(e) => ("IO", e.to_string()),
+            Error::ResponseError(e) => ("response", format!("status code {}", e.status)),
+        };
+        write!(f, "error in {}: {}", module, e)
+    }
+}
+
+#[cfg(not(target_family = "wasm"))]
+impl<T: fmt::Debug> error::Error for Error<T> {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         Some(match self {
             Error::Reqwest(e) => e,
@@ -39,22 +73,73 @@ impl <T: fmt::Debug> error::Error for Error<T> {
     }
 }
 
-impl <T> From<reqwest::Error> for Error<T> {
+#[cfg(target_family = "wasm")]
+impl<T: fmt::Debug> error::Error for Error<T> {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        use std::fmt::Debug;
+
+        Some(match self {
+            Error::Js(_) => return None,
+            Error::Serde(e) => e,
+            Error::Io(e) => e,
+            Error::ResponseError(_) => return None,
+        })
+    }
+}
+
+#[cfg(not(target_family = "wasm"))]
+impl<T> From<reqwest::Error> for Error<T> {
     fn from(e: reqwest::Error) -> Self {
         Error::Reqwest(e)
     }
 }
 
-impl <T> From<serde_json::Error> for Error<T> {
+#[cfg(target_family = "wasm")]
+impl<T> From<wasm_bindgen::JsValue> for Error<T> {
+    fn from(e: wasm_bindgen::JsValue) -> Self {
+        Error::Js(e)
+    }
+}
+
+impl<T> From<serde_json::Error> for Error<T> {
     fn from(e: serde_json::Error) -> Self {
         Error::Serde(e)
     }
 }
 
-impl <T> From<std::io::Error> for Error<T> {
+impl<T> From<std::io::Error> for Error<T> {
     fn from(e: std::io::Error) -> Self {
         Error::Io(e)
     }
+}
+
+trait AddQuery {
+    fn add_query(&mut self, first_query: &mut bool, param: &str, value: &str);
+}
+
+impl AddQuery for String {
+    fn add_query(&mut self, first_query: &mut bool, param: &str, value: &str) {
+        if *first_query {
+            self.push('?');
+            *first_query = false;
+        } else {
+            self.push('&');
+        }
+        self.push_str(param);
+        self.push_str(value);
+    }
+}
+
+#[inline]
+fn add_query(first_query: &mut bool, uri: &mut String, param: &str, value: &str) {
+    if *first_query {
+        uri.push('?');
+        *first_query = false;
+    } else {
+        uri.push('&');
+    }
+    uri.push_str(param);
+    uri.push_str(value);
 }
 
 pub fn urlencode<T: AsRef<str>>(s: T) -> String {
@@ -63,7 +148,7 @@ pub fn urlencode<T: AsRef<str>>(s: T) -> String {
 
 pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String, String)> {
     if let serde_json::Value::Object(object) = value {
-        let mut params = vec![];
+        let mut params: Vec<(String, String)> = vec![];
 
         for (key, value) in object {
             match value {
@@ -78,8 +163,10 @@ pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String
                             value,
                         ));
                     }
-                },
-                serde_json::Value::String(s) => params.push((format!("{}[{}]", prefix, key), s.clone())),
+                }
+                serde_json::Value::String(s) => {
+                    params.push((format!("{}[{}]", prefix, key), s.clone()))
+                }
                 _ => params.push((format!("{}[{}]", prefix, key), value.to_string())),
             }
         }
