@@ -1668,13 +1668,14 @@ pub async fn disable_my_session(
     local_var_client.set_mode(RequestMode::Cors);
     local_var_client.set_credentials(RequestCredentials::Include);
 
+    let id = crate::apis::urlencode(id);
     let possible_uri_len = "/sessions/".len() + local_var_configuration.base_path.len() + id.len();
 
     let mut local_var_uri_str = String::with_capacity(possible_uri_len);
 
     local_var_uri_str.push_str(&local_var_configuration.base_path);
     local_var_uri_str.push_str("/sessions/");
-    local_var_uri_str.push_str(id);
+    local_var_uri_str.push_str(&id);
 
     let local_var_req_builder =
         Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
