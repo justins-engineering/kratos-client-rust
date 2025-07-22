@@ -130,6 +130,7 @@ impl AddQuery for String {
     }
 }
 
+#[allow(dead_code)]
 #[inline]
 fn add_query(first_query: &mut bool, uri: &mut String, param: &str, value: &str) {
     if *first_query {
