@@ -126,7 +126,13 @@ pub async fn get_version(
         let local_var_entity: Option<GetVersionError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -213,7 +219,13 @@ pub async fn is_alive(
         let local_var_entity: Option<IsAliveError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -300,7 +312,13 @@ pub async fn is_ready(
         let local_var_entity: Option<IsReadyError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))

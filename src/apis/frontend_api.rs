@@ -499,7 +499,13 @@ pub async fn create_browser_login_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -620,7 +626,13 @@ pub async fn create_browser_logout_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -732,7 +744,13 @@ pub async fn create_browser_recovery_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -879,7 +897,13 @@ pub async fn create_browser_registration_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1000,7 +1024,13 @@ pub async fn create_browser_settings_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1112,7 +1142,13 @@ pub async fn create_browser_verification_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1211,7 +1247,13 @@ pub async fn create_fedcm_flow(
         let local_var_entity: Option<CreateFedcmFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1594,7 +1636,13 @@ pub async fn disable_my_other_sessions(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1717,7 +1765,13 @@ pub async fn disable_my_session(
         let local_var_entity: Option<DisableMySessionError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1833,7 +1887,13 @@ pub async fn exchange_session_token(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1937,7 +1997,13 @@ pub async fn get_flow_error(
         let local_var_entity: Option<GetFlowErrorError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2053,7 +2119,13 @@ pub async fn get_login_flow(
         let local_var_entity: Option<GetLoginFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2169,7 +2241,13 @@ pub async fn get_recovery_flow(
         let local_var_entity: Option<GetRecoveryFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2286,7 +2364,13 @@ pub async fn get_registration_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2413,7 +2497,13 @@ pub async fn get_settings_flow(
         let local_var_entity: Option<GetSettingsFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2530,7 +2620,13 @@ pub async fn get_verification_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2630,7 +2726,13 @@ pub async fn get_web_authn_java_script(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2794,7 +2896,13 @@ pub async fn list_my_sessions(
         let local_var_entity: Option<ListMySessionsError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2965,7 +3073,13 @@ pub async fn to_session(
         let local_var_entity: Option<ToSessionError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -3071,7 +3185,13 @@ pub async fn update_fedcm_flow(
         let local_var_entity: Option<UpdateFedcmFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -3203,7 +3323,13 @@ pub async fn update_login_flow(
         let local_var_entity: Option<UpdateLoginFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -3332,7 +3458,13 @@ pub async fn update_logout_flow(
         let local_var_entity: Option<UpdateLogoutFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -3468,7 +3600,13 @@ pub async fn update_recovery_flow(
         let local_var_entity: Option<UpdateRecoveryFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -3593,7 +3731,13 @@ pub async fn update_registration_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -3728,7 +3872,13 @@ pub async fn update_settings_flow(
         let local_var_entity: Option<UpdateSettingsFlowError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -3865,7 +4015,13 @@ pub async fn update_verification_flow(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))

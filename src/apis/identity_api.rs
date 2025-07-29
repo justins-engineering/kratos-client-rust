@@ -309,7 +309,13 @@ pub async fn batch_patch_identities(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -430,7 +436,13 @@ pub async fn create_identity(
         let local_var_entity: Option<CreateIdentityError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -554,7 +566,13 @@ pub async fn create_recovery_code_for_identity(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -691,7 +709,13 @@ pub async fn create_recovery_link_for_identity(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -814,7 +838,13 @@ pub async fn delete_identity(
         let local_var_entity: Option<DeleteIdentityError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -953,7 +983,13 @@ pub async fn delete_identity_credentials(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1080,7 +1116,13 @@ pub async fn delete_identity_sessions(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1203,7 +1245,13 @@ pub async fn disable_session(
         let local_var_entity: Option<DisableSessionError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1329,7 +1377,13 @@ pub async fn extend_session(
         let local_var_entity: Option<ExtendSessionError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1487,7 +1541,13 @@ pub async fn get_identity(
         let local_var_entity: Option<GetIdentityError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1590,7 +1650,13 @@ pub async fn get_identity_schema(
         let local_var_entity: Option<GetIdentitySchemaError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -1748,7 +1814,13 @@ pub async fn get_session(
         let local_var_entity: Option<GetSessionError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2028,7 +2100,13 @@ pub async fn list_identities(
         let local_var_entity: Option<ListIdentitiesError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2175,7 +2253,13 @@ pub async fn list_identity_schemas(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2362,7 +2446,13 @@ pub async fn list_identity_sessions(
             local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2547,7 +2637,13 @@ pub async fn list_sessions(
         let local_var_entity: Option<ListSessionsError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2677,7 +2773,13 @@ pub async fn patch_identity(
         let local_var_entity: Option<PatchIdentityError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
@@ -2807,7 +2909,13 @@ pub async fn update_identity(
         let local_var_entity: Option<UpdateIdentityError> = local_var_content.into_serde().ok();
         let local_var_error = ResponseContent {
             status: local_var_status,
-            content: format!("{:?}", local_var_content),
+            content: if local_var_content.is_undefined() {
+                String::from("null")
+            } else {
+                web_sys::js_sys::JSON::stringify(&local_var_content)
+                    .map(String::from)
+                    .unwrap_throw()
+            },
             entity: local_var_entity,
         };
         Err(Error::ResponseError(local_var_error))
