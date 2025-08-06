@@ -10,8 +10,11 @@ extern crate reqwest;
 
 #[cfg(target_family = "wasm")]
 extern crate gloo_utils;
+#[cfg(target_family = "wasm")]
 extern crate wasm_bindgen;
+#[cfg(target_family = "wasm")]
 extern crate wasm_bindgen_futures;
+#[cfg(target_family = "wasm")]
 extern crate web_sys;
 
 pub mod apis;

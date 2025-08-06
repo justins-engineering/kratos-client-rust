@@ -17,8 +17,11 @@ use reqwest;
 
 #[cfg(target_family = "wasm")]
 use gloo_utils::format::JsValueSerdeExt;
+#[cfg(target_family = "wasm")]
 use wasm_bindgen::prelude::*;
+#[cfg(target_family = "wasm")]
 use wasm_bindgen_futures::JsFuture;
+#[cfg(target_family = "wasm")]
 use web_sys::{Request, RequestCredentials, RequestInit, RequestMode, Response};
 
 /// struct for typed errors of method [`get_courier_message`]
