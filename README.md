@@ -15,7 +15,7 @@ changes to this repository will be overwritten on the next CI run!
 
 ## Installation
 
-[Rust (Crate)](https://crates.io/crates/ory-kratos-client/)
+[Rust (Crate)](https://crates.io/crates/ory-kratos-client-wasm/)
 
 ## Documentation
 
