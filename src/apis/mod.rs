@@ -1,7 +1,7 @@
 use std::error;
 use std::fmt;
 
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 #[derive(Debug, Clone)]
 pub struct ResponseContent<T> {
     pub status: reqwest::StatusCode,
@@ -9,7 +9,7 @@ pub struct ResponseContent<T> {
     pub entity: Option<T>,
 }
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 #[derive(Debug, Clone)]
 pub struct ResponseContent<T> {
     pub status: u16,
@@ -17,7 +17,7 @@ pub struct ResponseContent<T> {
     pub entity: Option<T>,
 }
 
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 #[derive(Debug)]
 pub enum Error<T> {
     Reqwest(reqwest::Error),
@@ -26,7 +26,7 @@ pub enum Error<T> {
     ResponseError(ResponseContent<T>),
 }
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 #[derive(Debug)]
 pub enum Error<T> {
     Js(wasm_bindgen::JsValue),
@@ -35,7 +35,7 @@ pub enum Error<T> {
     ResponseError(ResponseContent<T>),
 }
 
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 impl<T> fmt::Display for Error<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
@@ -48,7 +48,7 @@ impl<T> fmt::Display for Error<T> {
     }
 }
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 impl<T> fmt::Display for Error<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
@@ -61,7 +61,7 @@ impl<T> fmt::Display for Error<T> {
     }
 }
 
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 impl<T: fmt::Debug> error::Error for Error<T> {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         Some(match self {
@@ -73,11 +73,9 @@ impl<T: fmt::Debug> error::Error for Error<T> {
     }
 }
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 impl<T: fmt::Debug> error::Error for Error<T> {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        use std::fmt::Debug;
-
         Some(match self {
             Error::Js(_) => return None,
             Error::Serde(e) => e,
@@ -87,14 +85,14 @@ impl<T: fmt::Debug> error::Error for Error<T> {
     }
 }
 
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 impl<T> From<reqwest::Error> for Error<T> {
     fn from(e: reqwest::Error) -> Self {
         Error::Reqwest(e)
     }
 }
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 impl<T> From<wasm_bindgen::JsValue> for Error<T> {
     fn from(e: wasm_bindgen::JsValue) -> Self {
         Error::Js(e)
@@ -113,10 +111,12 @@ impl<T> From<std::io::Error> for Error<T> {
     }
 }
 
+#[cfg(feature = "wasm")]
 trait AddQuery {
     fn add_query(&mut self, first_query: &mut bool, param: &str, value: &str);
 }
 
+#[cfg(feature = "wasm")]
 impl AddQuery for String {
     fn add_query(&mut self, first_query: &mut bool, param: &str, value: &str) {
         if *first_query {
@@ -130,6 +130,7 @@ impl AddQuery for String {
     }
 }
 
+#[cfg(feature = "wasm")]
 #[allow(dead_code)]
 #[inline]
 fn add_query(first_query: &mut bool, uri: &mut String, param: &str, value: &str) {
@@ -178,9 +179,8 @@ pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String
     unimplemented!("Only objects are supported with style=deepObject")
 }
 
+pub mod configuration;
 pub mod courier_api;
 pub mod frontend_api;
 pub mod identity_api;
 pub mod metadata_api;
-
-pub mod configuration;

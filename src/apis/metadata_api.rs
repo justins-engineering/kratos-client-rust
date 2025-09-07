@@ -12,16 +12,16 @@ use super::{Error, configuration};
 use crate::{apis::ResponseContent, models};
 use serde::{Deserialize, Serialize};
 
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 use reqwest;
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 use gloo_utils::format::JsValueSerdeExt;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 use wasm_bindgen::prelude::*;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 use wasm_bindgen_futures::JsFuture;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 use web_sys::{Request, RequestInit, RequestMode, Response};
 
 /// struct for typed errors of method [`get_version`]
@@ -49,7 +49,7 @@ pub enum IsReadyError {
 }
 
 /// This endpoint returns the version of Ory Kratos.  If the service supports TLS Edge Termination, this endpoint does not require the `X-Forwarded-Proto` header to be set.  Be aware that if you are running multiple nodes of this service, the version will never refer to the cluster state, only to a single instance.
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 pub async fn get_version(
     configuration: &configuration::Configuration,
 ) -> Result<models::GetVersion200Response, Error<GetVersionError>> {
@@ -86,7 +86,7 @@ pub async fn get_version(
     }
 }
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 pub async fn get_version(
     configuration: &configuration::Configuration,
 ) -> Result<models::GetVersion200Response, Error<GetVersionError>> {
@@ -143,7 +143,7 @@ pub async fn get_version(
 }
 
 /// This endpoint returns a HTTP 200 status code when Ory Kratos is accepting incoming HTTP requests. This status does currently not include checks whether the database connection is working.  If the service supports TLS Edge Termination, this endpoint does not require the `X-Forwarded-Proto` header to be set.  Be aware that if you are running multiple nodes of this service, the health status will never refer to the cluster state, only to a single instance.
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 pub async fn is_alive(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsAliveError>> {
@@ -179,7 +179,7 @@ pub async fn is_alive(
     }
 }
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 pub async fn is_alive(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsAliveError>> {
@@ -236,7 +236,7 @@ pub async fn is_alive(
 }
 
 /// This endpoint returns a HTTP 200 status code when Ory Kratos is up running and the environment dependencies (e.g. the database) are responsive as well.  If the service supports TLS Edge Termination, this endpoint does not require the `X-Forwarded-Proto` header to be set.  Be aware that if you are running multiple nodes of Ory Kratos, the health status will never refer to the cluster state, only to a single instance.
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 pub async fn is_ready(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsReadyError>> {
@@ -272,7 +272,7 @@ pub async fn is_ready(
     }
 }
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 pub async fn is_ready(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsReadyError>> {

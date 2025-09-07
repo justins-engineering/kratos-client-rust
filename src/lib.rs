@@ -1,20 +1,22 @@
 #![allow(unused_imports)]
-#![allow(clippy::too_many_arguments)]
+
+#[cfg(all(feature = "wasm", feature = "reqwest"))]
+compile_error!("feature \"wasm\" and feature \"reqwest\" cannot be enabled at the same time");
 
 extern crate serde;
 extern crate serde_json;
 extern crate url;
 
-#[cfg(not(target_family = "wasm"))]
+#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
 extern crate reqwest;
 
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 extern crate gloo_utils;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 extern crate wasm_bindgen;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 extern crate wasm_bindgen_futures;
-#[cfg(target_family = "wasm")]
+#[cfg(all(target_family = "wasm", feature = "wasm"))]
 extern crate web_sys;
 
 pub mod apis;

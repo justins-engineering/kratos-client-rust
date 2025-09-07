@@ -6,6 +6,14 @@ For the official crate, use [ory-kratos-client](https://crates.io/crates/ory-kra
 
 API version: v1.3.8
 
+## Using with reqwest
+
+For feature parity with the official lib, add the following line to your `Cargo.toml`:
+
+```rust
+ory-kratos-client-wasm = { version = "0.1.3", default-features = false, features = ["reqwest"] }
+```
+
 ## Ory Self-Hosted
 
 This SDK is for use with self-hosted Ory Kratos.
