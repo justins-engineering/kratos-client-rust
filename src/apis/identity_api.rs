@@ -255,7 +255,7 @@ pub async fn batch_patch_identities(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("PATCH");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let possible_uri_len = local_var_configuration.base_path.len() + "/admin/identities".len();
     let mut local_var_uri_str = String::with_capacity(possible_uri_len);
@@ -383,7 +383,7 @@ pub async fn create_identity(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("POST");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let possible_uri_len = local_var_configuration.base_path.len() + "/admin/identities".len();
     let mut local_var_uri_str = String::with_capacity(possible_uri_len);
@@ -510,7 +510,7 @@ pub async fn create_recovery_code_for_identity(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("POST");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let possible_uri_len = local_var_configuration.base_path.len() + "/admin/recovery/code".len();
     let mut local_var_uri_str = String::with_capacity(possible_uri_len);
@@ -646,7 +646,7 @@ pub async fn create_recovery_link_for_identity(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("POST");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let possible_uri_len = (local_var_configuration.base_path.len() * 2)
         + "/admin/recovery/link".len()
@@ -786,7 +786,7 @@ pub async fn delete_identity(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("DELETE");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len =
@@ -919,7 +919,7 @@ pub async fn delete_identity_credentials(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("DELETE");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len = (local_var_configuration.base_path.len() * 2)
@@ -1060,7 +1060,7 @@ pub async fn delete_identity_sessions(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("DELETE");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len = local_var_configuration.base_path.len()
@@ -1193,7 +1193,7 @@ pub async fn disable_session(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("DELETE");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len =
@@ -1322,7 +1322,7 @@ pub async fn extend_session(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("PATCH");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len = local_var_configuration.base_path.len()
@@ -1475,7 +1475,7 @@ pub async fn get_identity(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len = local_var_configuration.base_path.len()
@@ -1610,7 +1610,7 @@ pub async fn get_identity_schema(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len = local_var_configuration.base_path.len() + "/schemas/".len() + id.len();
@@ -1748,7 +1748,7 @@ pub async fn get_session(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len = local_var_configuration.base_path.len()
@@ -1977,7 +1977,7 @@ pub async fn list_identities(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let possible_uri_len = local_var_configuration.base_path.len()
         + "/admin/identities".len()
@@ -2187,7 +2187,7 @@ pub async fn list_identity_schemas(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let possible_uri_len = local_var_configuration.base_path.len()
         + "/schemas".len()
@@ -2360,7 +2360,7 @@ pub async fn list_identity_sessions(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len = local_var_configuration.base_path.len()
@@ -2556,7 +2556,7 @@ pub async fn list_sessions(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let possible_uri_len = local_var_configuration.base_path.len()
         + "/admin/sessions".len()
@@ -2717,7 +2717,7 @@ pub async fn patch_identity(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("PATCH");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len =
@@ -2853,7 +2853,7 @@ pub async fn update_identity(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("PUT");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
     let possible_uri_len =

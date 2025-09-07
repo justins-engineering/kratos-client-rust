@@ -103,7 +103,7 @@ pub async fn get_courier_message(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let id = crate::apis::urlencode(id);
 
@@ -254,7 +254,7 @@ pub async fn list_courier_messages(
     let local_var_client = RequestInit::new();
     local_var_client.set_method("GET");
     local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    local_var_client.set_credentials(RequestCredentials::Include);
 
     let possible_uri_len = "/admin/courier/messages".len()
         + local_var_configuration.base_path.len()
