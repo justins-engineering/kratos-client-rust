@@ -1,6 +1,6 @@
 [package]
 name = "ory-kratos-client-wasm"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["JES <justin@jes.contact>", "office@ory.sh"]
 description = "A fork of ory-kratos-client that uses the browser's Fetch API instead of reqwest when building for wasm."
 license = "Apache-2.0"
@@ -9,7 +9,7 @@ resolver = "2"
 repository = "https://github.com/justins-engineering/kratos-client-rust"
 keywords = ["wasm", "web-sys", "authentication", "session", "session-management"]
 categories = ["wasm", "web-programming"]
-documentation = "https://docs.rs/tower-sessions"
+documentation = "https://docs.rs/ory-kratos-client-wasm/"
 readme = "README.md"
 
 [package.metadata.docs.rs]

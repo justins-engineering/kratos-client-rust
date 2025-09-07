@@ -815,7 +815,7 @@ dependencies = [
 
 [[package]]
 name = "ory-kratos-client-wasm"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "gloo-utils",
  "reqwest",
