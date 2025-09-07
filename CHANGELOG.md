@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
 
-## [0.1.3] - 2025-09-06
+- Updated CHANGELOG
+
+
+## [0.1.3] - 2025-09-07
 
 ### Changed
 
@@ -27,6 +31,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated cargo dependencies
 
 
+## [0.1.1] - 2025-09-04
+
+### Changed
+
+- Updated READEME to reflect this fork
+- Updated Cargo.toml info and edition
+
+
 [unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.3...master
 [0.1.3]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.0...v0.1.1
