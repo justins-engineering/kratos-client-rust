@@ -10,8 +10,8 @@ API version: v1.3.8
 
 For feature parity with the official lib, add the following line to your `Cargo.toml`:
 
-```rust
-ory-kratos-client-wasm = { version = "0.1.5", default-features = false, features = ["reqwest"] }
+```toml
+ory-kratos-client-wasm = { version = "0.1", default-features = false, features = ["reqwest"] }
 ```
 
 ## Ory Self-Hosted

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2025-09-22
+
+### Changed
+
+- Conditional compile gates based on features only, not target_family
+- Updated dependencies
+
+### Removed
+
+- `uuid` crate dependency
+
+### Fixed
+
+- Crate now compiles correctly with Dioxus fullstack
+
 ## [0.1.5] - 2025-09-07
 
 ### Changed
@@ -62,7 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Cargo.toml info and edition
 
 
-[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.5...master
+[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.6...master
+[0.1.6]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.2...v0.1.3
