@@ -12,318 +12,317 @@ use super::{Error, configuration};
 use crate::{apis::ResponseContent, models};
 use serde::{Deserialize, Serialize};
 
-#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
+#[cfg(feature = "reqwest")]
 use reqwest;
 
-#[cfg(all(target_family = "wasm", feature = "wasm"))]
+#[cfg(feature = "wasm")]
 use gloo_utils::format::JsValueSerdeExt;
-#[cfg(all(target_family = "wasm", feature = "wasm"))]
+#[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
-#[cfg(all(target_family = "wasm", feature = "wasm"))]
+#[cfg(feature = "wasm")]
 use wasm_bindgen_futures::JsFuture;
-#[cfg(all(target_family = "wasm", feature = "wasm"))]
+#[cfg(feature = "wasm")]
 use web_sys::{Request, RequestInit, RequestMode, Response};
 
 /// struct for typed errors of method [`get_version`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetVersionError {
-    UnknownValue(serde_json::Value),
+  UnknownValue(serde_json::Value),
 }
 
 /// struct for typed errors of method [`is_alive`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum IsAliveError {
-    DefaultResponse(String),
-    UnknownValue(serde_json::Value),
+  DefaultResponse(String),
+  UnknownValue(serde_json::Value),
 }
 
 /// struct for typed errors of method [`is_ready`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum IsReadyError {
-    Status503(models::IsReady503Response),
-    DefaultResponse(String),
-    UnknownValue(serde_json::Value),
+  Status503(models::IsReady503Response),
+  DefaultResponse(String),
+  UnknownValue(serde_json::Value),
 }
 
 /// This endpoint returns the version of Ory Kratos.  If the service supports TLS Edge Termination, this endpoint does not require the `X-Forwarded-Proto` header to be set.  Be aware that if you are running multiple nodes of this service, the version will never refer to the cluster state, only to a single instance.
-#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
+#[cfg(feature = "reqwest")]
 pub async fn get_version(
-    configuration: &configuration::Configuration,
+  configuration: &configuration::Configuration,
 ) -> Result<models::GetVersion200Response, Error<GetVersionError>> {
-    let local_var_configuration = configuration;
+  let local_var_configuration = configuration;
 
-    let local_var_client = &local_var_configuration.client;
+  let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/version", local_var_configuration.base_path);
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+  let local_var_uri_str = format!("{}/version", local_var_configuration.base_path);
+  let mut local_var_req_builder =
+    local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
+  if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
+    local_var_req_builder =
+      local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+  }
 
-    let local_var_req = local_var_req_builder.build()?;
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
+  let local_var_req = local_var_req_builder.build()?;
+  let local_var_resp = local_var_client.execute(local_var_req).await?;
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = local_var_resp.text().await?;
+  let local_var_status = local_var_resp.status();
+  let local_var_content = local_var_resp.text().await?;
 
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
-    } else {
-        let local_var_entity: Option<GetVersionError> =
-            serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
+  if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+    serde_json::from_str(&local_var_content).map_err(Error::from)
+  } else {
+    let local_var_entity: Option<GetVersionError> = serde_json::from_str(&local_var_content).ok();
+    let local_var_error = ResponseContent {
+      status: local_var_status,
+      content: local_var_content,
+      entity: local_var_entity,
+    };
+    Err(Error::ResponseError(local_var_error))
+  }
 }
 
-#[cfg(all(target_family = "wasm", feature = "wasm"))]
+#[cfg(feature = "wasm")]
 pub async fn get_version(
-    configuration: &configuration::Configuration,
+  configuration: &configuration::Configuration,
 ) -> Result<models::GetVersion200Response, Error<GetVersionError>> {
-    let local_var_configuration = configuration;
+  let local_var_configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
+  let local_var_client = RequestInit::new();
+  local_var_client.set_method("GET");
+  local_var_client.set_mode(RequestMode::Cors);
 
-    let local_var_uri_str = format!("{}/version", local_var_configuration.base_path);
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+  let local_var_uri_str = format!("{}/version", local_var_configuration.base_path);
+  let local_var_req_builder =
+    Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
-    }
-
+  if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
     local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+      .headers()
+      .set("USER_AGENT", local_var_user_agent)?;
+  }
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+  local_var_req_builder
+    .headers()
+    .set("Accept", "application/json")?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+  let local_var_req = JsFuture::from(
+    web_sys::window()
+      .unwrap()
+      .fetch_with_request(&local_var_req_builder),
+  )
+  .await?;
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+  assert!(local_var_req.is_instance_of::<Response>());
+  let local_var_resp: Response = local_var_req.dyn_into().unwrap();
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
-    } else {
-        let local_var_entity: Option<GetVersionError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
-                String::from("null")
-            } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
-                    .map(String::from)
-                    .unwrap_throw()
-            },
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
+  let local_var_status = local_var_resp.status();
+  let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+
+  if !(400..600).contains(&local_var_status) {
+    local_var_content.into_serde().map_err(Error::from)
+  } else {
+    let local_var_entity: Option<GetVersionError> = local_var_content.into_serde().ok();
+    let local_var_error = ResponseContent {
+      status: local_var_status,
+      content: if local_var_content.is_undefined() {
+        String::from("null")
+      } else {
+        web_sys::js_sys::JSON::stringify(&local_var_content)
+          .map(String::from)
+          .unwrap_throw()
+      },
+      entity: local_var_entity,
+    };
+    Err(Error::ResponseError(local_var_error))
+  }
 }
 
 /// This endpoint returns a HTTP 200 status code when Ory Kratos is accepting incoming HTTP requests. This status does currently not include checks whether the database connection is working.  If the service supports TLS Edge Termination, this endpoint does not require the `X-Forwarded-Proto` header to be set.  Be aware that if you are running multiple nodes of this service, the health status will never refer to the cluster state, only to a single instance.
-#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
+#[cfg(feature = "reqwest")]
 pub async fn is_alive(
-    configuration: &configuration::Configuration,
+  configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsAliveError>> {
-    let local_var_configuration = configuration;
+  let local_var_configuration = configuration;
 
-    let local_var_client = &local_var_configuration.client;
+  let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/health/alive", local_var_configuration.base_path);
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+  let local_var_uri_str = format!("{}/health/alive", local_var_configuration.base_path);
+  let mut local_var_req_builder =
+    local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
+  if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
+    local_var_req_builder =
+      local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+  }
 
-    let local_var_req = local_var_req_builder.build()?;
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
+  let local_var_req = local_var_req_builder.build()?;
+  let local_var_resp = local_var_client.execute(local_var_req).await?;
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = local_var_resp.text().await?;
+  let local_var_status = local_var_resp.status();
+  let local_var_content = local_var_resp.text().await?;
 
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
-    } else {
-        let local_var_entity: Option<IsAliveError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
+  if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+    serde_json::from_str(&local_var_content).map_err(Error::from)
+  } else {
+    let local_var_entity: Option<IsAliveError> = serde_json::from_str(&local_var_content).ok();
+    let local_var_error = ResponseContent {
+      status: local_var_status,
+      content: local_var_content,
+      entity: local_var_entity,
+    };
+    Err(Error::ResponseError(local_var_error))
+  }
 }
 
-#[cfg(all(target_family = "wasm", feature = "wasm"))]
+#[cfg(feature = "wasm")]
 pub async fn is_alive(
-    configuration: &configuration::Configuration,
+  configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsAliveError>> {
-    let local_var_configuration = configuration;
+  let local_var_configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
+  let local_var_client = RequestInit::new();
+  local_var_client.set_method("GET");
+  local_var_client.set_mode(RequestMode::Cors);
 
-    let local_var_uri_str = format!("{}/health/ready", local_var_configuration.base_path);
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+  let local_var_uri_str = format!("{}/health/ready", local_var_configuration.base_path);
+  let local_var_req_builder =
+    Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
-    }
-
+  if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
     local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+      .headers()
+      .set("USER_AGENT", local_var_user_agent)?;
+  }
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+  local_var_req_builder
+    .headers()
+    .set("Accept", "application/json")?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+  let local_var_req = JsFuture::from(
+    web_sys::window()
+      .unwrap()
+      .fetch_with_request(&local_var_req_builder),
+  )
+  .await?;
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+  assert!(local_var_req.is_instance_of::<Response>());
+  let local_var_resp: Response = local_var_req.dyn_into().unwrap();
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
-    } else {
-        let local_var_entity: Option<IsAliveError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
-                String::from("null")
-            } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
-                    .map(String::from)
-                    .unwrap_throw()
-            },
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
+  let local_var_status = local_var_resp.status();
+  let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+
+  if !(400..600).contains(&local_var_status) {
+    local_var_content.into_serde().map_err(Error::from)
+  } else {
+    let local_var_entity: Option<IsAliveError> = local_var_content.into_serde().ok();
+    let local_var_error = ResponseContent {
+      status: local_var_status,
+      content: if local_var_content.is_undefined() {
+        String::from("null")
+      } else {
+        web_sys::js_sys::JSON::stringify(&local_var_content)
+          .map(String::from)
+          .unwrap_throw()
+      },
+      entity: local_var_entity,
+    };
+    Err(Error::ResponseError(local_var_error))
+  }
 }
 
 /// This endpoint returns a HTTP 200 status code when Ory Kratos is up running and the environment dependencies (e.g. the database) are responsive as well.  If the service supports TLS Edge Termination, this endpoint does not require the `X-Forwarded-Proto` header to be set.  Be aware that if you are running multiple nodes of Ory Kratos, the health status will never refer to the cluster state, only to a single instance.
-#[cfg(any(not(target_family = "wasm"), feature = "reqwest"))]
+#[cfg(feature = "reqwest")]
 pub async fn is_ready(
-    configuration: &configuration::Configuration,
+  configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsReadyError>> {
-    let local_var_configuration = configuration;
+  let local_var_configuration = configuration;
 
-    let local_var_client = &local_var_configuration.client;
+  let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/health/ready", local_var_configuration.base_path);
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+  let local_var_uri_str = format!("{}/health/ready", local_var_configuration.base_path);
+  let mut local_var_req_builder =
+    local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
+  if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
+    local_var_req_builder =
+      local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+  }
 
-    let local_var_req = local_var_req_builder.build()?;
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
+  let local_var_req = local_var_req_builder.build()?;
+  let local_var_resp = local_var_client.execute(local_var_req).await?;
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = local_var_resp.text().await?;
+  let local_var_status = local_var_resp.status();
+  let local_var_content = local_var_resp.text().await?;
 
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
-    } else {
-        let local_var_entity: Option<IsReadyError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
+  if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+    serde_json::from_str(&local_var_content).map_err(Error::from)
+  } else {
+    let local_var_entity: Option<IsReadyError> = serde_json::from_str(&local_var_content).ok();
+    let local_var_error = ResponseContent {
+      status: local_var_status,
+      content: local_var_content,
+      entity: local_var_entity,
+    };
+    Err(Error::ResponseError(local_var_error))
+  }
 }
 
-#[cfg(all(target_family = "wasm", feature = "wasm"))]
+#[cfg(feature = "wasm")]
 pub async fn is_ready(
-    configuration: &configuration::Configuration,
+  configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsReadyError>> {
-    let local_var_configuration = configuration;
+  let local_var_configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
+  let local_var_client = RequestInit::new();
+  local_var_client.set_method("GET");
+  local_var_client.set_mode(RequestMode::Cors);
 
-    let local_var_uri_str = format!("{}/health/ready", local_var_configuration.base_path);
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+  let local_var_uri_str = format!("{}/health/ready", local_var_configuration.base_path);
+  let local_var_req_builder =
+    Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
-    }
-
+  if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
     local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+      .headers()
+      .set("USER_AGENT", local_var_user_agent)?;
+  }
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+  local_var_req_builder
+    .headers()
+    .set("Accept", "application/json")?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+  let local_var_req = JsFuture::from(
+    web_sys::window()
+      .unwrap()
+      .fetch_with_request(&local_var_req_builder),
+  )
+  .await?;
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+  assert!(local_var_req.is_instance_of::<Response>());
+  let local_var_resp: Response = local_var_req.dyn_into().unwrap();
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
-    } else {
-        let local_var_entity: Option<IsReadyError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
-                String::from("null")
-            } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
-                    .map(String::from)
-                    .unwrap_throw()
-            },
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
+  let local_var_status = local_var_resp.status();
+  let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+
+  if !(400..600).contains(&local_var_status) {
+    local_var_content.into_serde().map_err(Error::from)
+  } else {
+    let local_var_entity: Option<IsReadyError> = local_var_content.into_serde().ok();
+    let local_var_error = ResponseContent {
+      status: local_var_status,
+      content: if local_var_content.is_undefined() {
+        String::from("null")
+      } else {
+        web_sys::js_sys::JSON::stringify(&local_var_content)
+          .map(String::from)
+          .unwrap_throw()
+      },
+      entity: local_var_entity,
+    };
+    Err(Error::ResponseError(local_var_error))
+  }
 }
