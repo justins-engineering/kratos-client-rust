@@ -47,7 +47,6 @@ reqwest = { version = "^0.13", features = [
   "multipart",
   "query",
 ], optional = true }
-uuid = { version = "^1.8", features = ["serde", "v4"], optional = true }
 
 [features]
 default = ["wasm"]
@@ -57,4 +56,4 @@ wasm = [
   "dep:wasm-bindgen-futures",
   "dep:web-sys",
 ]
-reqwest = ["dep:reqwest", "dep:uuid"]
+reqwest = ["dep:reqwest"]
