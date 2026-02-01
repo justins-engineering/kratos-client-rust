@@ -19,5 +19,10 @@ extern crate wasm_bindgen_futures;
 #[cfg(feature = "wasm")]
 extern crate web_sys;
 
+#[cfg(feature = "reqwest")]
 pub mod apis;
+
+#[cfg(feature = "wasm")]
+pub mod wasm_apis;
+
 pub mod models;
