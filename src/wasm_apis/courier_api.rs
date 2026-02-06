@@ -49,8 +49,6 @@ pub async fn get_courier_message(
     uri_str.push_str("/admin/courier/messages/");
     uri_str.push_str(&p_id);
 
-    let configuration = configuration;
-
     let req_builder = RequestInit::new();
     req_builder.set_method("GET");
     req_builder.set_mode(RequestMode::Cors);

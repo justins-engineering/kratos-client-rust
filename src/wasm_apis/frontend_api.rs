@@ -343,8 +343,6 @@ pub async fn create_browser_login_flow(
     via: Option<&str>,
     identity_schema: Option<&str>,
 ) -> Result<models::LoginFlow, Error<CreateBrowserLoginFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -450,8 +448,6 @@ pub async fn create_browser_logout_flow(
     cookie: Option<&str>,
     return_to: Option<&str>,
 ) -> Result<models::LogoutFlow, Error<CreateBrowserLogoutFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -531,8 +527,6 @@ pub async fn create_browser_recovery_flow(
     configuration: &configuration::Configuration,
     return_to: Option<&str>,
 ) -> Result<models::RecoveryFlow, Error<CreateBrowserRecoveryFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -613,8 +607,6 @@ pub async fn create_browser_registration_flow(
     organization: Option<&str>,
     identity_schema: Option<&str>,
 ) -> Result<models::RegistrationFlow, Error<CreateBrowserRegistrationFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -709,8 +701,6 @@ pub async fn create_browser_settings_flow(
     return_to: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<models::SettingsFlow, Error<CreateBrowserSettingsFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -790,8 +780,6 @@ pub async fn create_browser_verification_flow(
     configuration: &configuration::Configuration,
     return_to: Option<&str>,
 ) -> Result<models::VerificationFlow, Error<CreateBrowserVerificationFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -867,8 +855,6 @@ pub async fn create_browser_verification_flow(
 pub async fn create_fedcm_flow(
     configuration: &configuration::Configuration,
 ) -> Result<models::CreateFedcmFlowResponse, Error<CreateFedcmFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -939,8 +925,6 @@ pub async fn disable_my_other_sessions(
     x_session_token: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<models::DeleteMySessionsCount, Error<DisableMyOtherSessionsError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("DELETE");
     client.set_mode(RequestMode::Cors);
@@ -1020,8 +1004,6 @@ pub async fn disable_my_session(
     x_session_token: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<(), Error<DisableMySessionError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("DELETE");
     client.set_mode(RequestMode::Cors);
@@ -1083,8 +1065,6 @@ pub async fn exchange_session_token(
     init_code: &str,
     return_to_code: &str,
 ) -> Result<models::SuccessfulNativeLogin, Error<ExchangeSessionTokenError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1165,8 +1145,6 @@ pub async fn get_flow_error(
     configuration: &configuration::Configuration,
     id: &str,
 ) -> Result<models::FlowError, Error<GetFlowErrorError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1241,8 +1219,6 @@ pub async fn get_login_flow(
     id: &str,
     cookie: Option<&str>,
 ) -> Result<models::LoginFlow, Error<GetLoginFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1320,8 +1296,6 @@ pub async fn get_recovery_flow(
     id: &str,
     cookie: Option<&str>,
 ) -> Result<models::RecoveryFlow, Error<GetRecoveryFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1401,8 +1375,6 @@ pub async fn get_registration_flow(
     id: &str,
     cookie: Option<&str>,
 ) -> Result<models::RegistrationFlow, Error<GetRegistrationFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1483,8 +1455,6 @@ pub async fn get_settings_flow(
     x_session_token: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<models::SettingsFlow, Error<GetSettingsFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1569,8 +1539,6 @@ pub async fn get_verification_flow(
     id: &str,
     cookie: Option<&str>,
 ) -> Result<models::VerificationFlow, Error<GetVerificationFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1648,8 +1616,6 @@ pub async fn get_verification_flow(
 pub async fn get_web_authn_java_script(
     configuration: &configuration::Configuration,
 ) -> Result<String, Error<GetWebAuthnJavaScriptError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1724,8 +1690,6 @@ pub async fn list_my_sessions(
     x_session_token: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<Vec<models::Session>, Error<ListMySessionsError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1826,8 +1790,6 @@ pub async fn to_session(
     cookie: Option<&str>,
     tokenize_as: Option<&str>,
 ) -> Result<models::Session, Error<ToSessionError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -1911,8 +1873,6 @@ pub async fn update_fedcm_flow(
     configuration: &configuration::Configuration,
     update_fedcm_flow_body: models::UpdateFedcmFlowBody,
 ) -> Result<models::SuccessfulNativeLogin, Error<UpdateFedcmFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("POST");
     client.set_mode(RequestMode::Cors);
@@ -1989,8 +1949,6 @@ pub async fn update_login_flow(
     x_session_token: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<models::SuccessfulNativeLogin, Error<UpdateLoginFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("POST");
     client.set_mode(RequestMode::Cors);
@@ -2079,8 +2037,6 @@ pub async fn update_logout_flow(
     return_to: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<(), Error<UpdateLogoutFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -2151,8 +2107,6 @@ pub async fn update_recovery_flow(
     token: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<models::RecoveryFlow, Error<UpdateRecoveryFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("POST");
     client.set_mode(RequestMode::Cors);
@@ -2244,8 +2198,6 @@ pub async fn update_registration_flow(
     update_registration_flow_body: models::UpdateRegistrationFlowBody,
     cookie: Option<&str>,
 ) -> Result<models::SuccessfulNativeRegistration, Error<UpdateRegistrationFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("POST");
     client.set_mode(RequestMode::Cors);
@@ -2332,8 +2284,6 @@ pub async fn update_settings_flow(
     x_session_token: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<models::SettingsFlow, Error<UpdateSettingsFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("POST");
     client.set_mode(RequestMode::Cors);
@@ -2425,8 +2375,6 @@ pub async fn update_verification_flow(
     token: Option<&str>,
     cookie: Option<&str>,
 ) -> Result<models::VerificationFlow, Error<UpdateVerificationFlowError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("POST");
     client.set_mode(RequestMode::Cors);

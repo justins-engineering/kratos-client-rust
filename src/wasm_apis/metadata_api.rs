@@ -44,8 +44,6 @@ pub enum IsReadyError {
 pub async fn get_version(
     configuration: &configuration::Configuration,
 ) -> Result<models::GetVersion200Response, Error<GetVersionError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -90,8 +88,6 @@ pub async fn get_version(
 pub async fn is_alive(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsAliveError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
@@ -136,8 +132,6 @@ pub async fn is_alive(
 pub async fn is_ready(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsReadyError>> {
-    let configuration = configuration;
-
     let client = RequestInit::new();
     client.set_method("GET");
     client.set_mode(RequestMode::Cors);
