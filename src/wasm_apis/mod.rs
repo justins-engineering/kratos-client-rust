@@ -74,19 +74,6 @@ impl AddQuery for String {
     }
 }
 
-#[allow(dead_code)]
-#[inline]
-fn add_query(first_query: &mut bool, uri: &mut String, param: &str, value: &str) {
-    if *first_query {
-        uri.push('?');
-        *first_query = false;
-    } else {
-        uri.push('&');
-    }
-    uri.push_str(param);
-    uri.push_str(value);
-}
-
 pub fn urlencode<T: AsRef<str>>(s: T) -> String {
     ::url::form_urlencoded::byte_serialize(s.as_ref().as_bytes()).collect()
 }
@@ -124,11 +111,11 @@ pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String
 
 /// Internal use only
 /// A content type supported by this client.
-#[allow(dead_code)]
 enum ContentType {
     Json,
     Text,
     Unsupported(String),
+    Missing,
 }
 
 impl From<&str> for ContentType {
@@ -140,6 +127,18 @@ impl From<&str> for ContentType {
         } else {
             Self::Unsupported(content_type.to_string())
         }
+    }
+}
+
+impl From<&web_sys::Response> for ContentType {
+    fn from(resp: &web_sys::Response) -> Self {
+        let content_type = resp.headers().get("content-type").unwrap_or_default();
+
+        let Some(content_type) = content_type else {
+            return Self::Missing;
+        };
+
+        Self::from(content_type.as_str())
     }
 }
 

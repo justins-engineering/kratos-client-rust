@@ -79,12 +79,7 @@ pub async fn get_courier_message(
     let resp: Response = req.dyn_into().unwrap();
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .unwrap_or(Some("application/octet-stream".to_string()))
-        .unwrap_throw();
-    let content_type: ContentType = super::ContentType::from(content_type.as_str());
+    let content_type: ContentType = super::ContentType::from(&resp);
     let content = JsFuture::from(resp.json()?).await?;
 
     if !(400..600).contains(&status) {
@@ -98,6 +93,11 @@ pub async fn get_courier_message(
             ContentType::Unsupported(unknown_type) => {
                 return Err(Error::from(serde_json::Error::custom(format!(
                     "Received `{unknown_type}` content type response that cannot be converted to `models::Message`"
+                ))));
+            }
+            ContentType::Missing => {
+                return Err(Error::from(serde_json::Error::custom(format!(
+                    "Received response that is missing `content-type` header"
                 ))));
             }
         }
@@ -181,12 +181,7 @@ pub async fn list_courier_messages(
     let resp: Response = req.dyn_into().unwrap();
 
     let status = resp.status();
-    let content_type = resp
-        .headers()
-        .get("content-type")
-        .unwrap_or(Some("application/octet-stream".to_string()))
-        .unwrap_throw();
-    let content_type: ContentType = super::ContentType::from(content_type.as_str());
+    let content_type: ContentType = super::ContentType::from(&resp);
     let content = JsFuture::from(resp.json()?).await?;
 
     if !(400..600).contains(&status) {
@@ -200,6 +195,11 @@ pub async fn list_courier_messages(
             ContentType::Unsupported(unknown_type) => {
                 return Err(Error::from(serde_json::Error::custom(format!(
                     "Received `{unknown_type}` content type response that cannot be converted to `Vec&lt;models::Message&gt;`"
+                ))));
+            }
+            ContentType::Missing => {
+                return Err(Error::from(serde_json::Error::custom(format!(
+                    "Received response that is missing `content-type` header"
                 ))));
             }
         }
