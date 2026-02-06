@@ -193,78 +193,65 @@ pub async fn batch_patch_identities(
     configuration: &configuration::Configuration,
     patch_identities_body: Option<models::PatchIdentitiesBody>,
 ) -> Result<models::BatchPatchIdentitiesResponse, Error<BatchPatchIdentitiesError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("PATCH");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("PATCH");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
-    let possible_uri_len = local_var_configuration.base_path.len() + "/admin/identities".len();
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let possible_uri_len = configuration.base_path.len() + "/admin/identities".len();
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities");
 
-    local_var_client.set_body(&JsValue::from_serde(&patch_identities_body)?);
+    client.set_body(&JsValue::from_serde(&patch_identities_body)?);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
-    local_var_req_builder
+    req_builder.headers().set("Accept", "application/json")?;
+    req_builder
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<BatchPatchIdentitiesError> =
-            local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<BatchPatchIdentitiesError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -273,77 +260,65 @@ pub async fn create_identity(
     configuration: &configuration::Configuration,
     create_identity_body: Option<models::CreateIdentityBody>,
 ) -> Result<models::Identity, Error<CreateIdentityError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("POST");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("POST");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
-    let possible_uri_len = local_var_configuration.base_path.len() + "/admin/identities".len();
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let possible_uri_len = configuration.base_path.len() + "/admin/identities".len();
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities");
 
-    local_var_client.set_body(&JsValue::from_serde(&create_identity_body)?);
+    client.set_body(&JsValue::from_serde(&create_identity_body)?);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
-    local_var_req_builder
+    req_builder.headers().set("Accept", "application/json")?;
+    req_builder
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<CreateIdentityError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<CreateIdentityError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -352,80 +327,67 @@ pub async fn create_recovery_code_for_identity(
     configuration: &configuration::Configuration,
     create_recovery_code_for_identity_body: Option<models::CreateRecoveryCodeForIdentityBody>,
 ) -> Result<models::RecoveryCodeForIdentity, Error<CreateRecoveryCodeForIdentityError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("POST");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("POST");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
-    let possible_uri_len = local_var_configuration.base_path.len() + "/admin/recovery/code".len();
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let possible_uri_len = configuration.base_path.len() + "/admin/recovery/code".len();
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/recovery/code");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/recovery/code");
 
-    local_var_client.set_body(&JsValue::from_serde(
+    client.set_body(&JsValue::from_serde(
         &create_recovery_code_for_identity_body,
     )?);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
-    local_var_req_builder
+    req_builder.headers().set("Accept", "application/json")?;
+    req_builder
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<CreateRecoveryCodeForIdentityError> =
-            local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<CreateRecoveryCodeForIdentityError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -435,87 +397,73 @@ pub async fn create_recovery_link_for_identity(
     return_to: Option<&str>,
     create_recovery_link_for_identity_body: Option<models::CreateRecoveryLinkForIdentityBody>,
 ) -> Result<models::RecoveryLinkForIdentity, Error<CreateRecoveryLinkForIdentityError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("POST");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("POST");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
-    let possible_uri_len = (local_var_configuration.base_path.len() * 2)
-        + "/admin/recovery/link".len()
-        + "?return_to=".len();
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let possible_uri_len =
+        (configuration.base_path.len() * 2) + "/admin/recovery/link".len() + "?return_to=".len();
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/recovery/link");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/recovery/link");
 
-    if let Some(ref local_var_str) = return_to {
-        local_var_uri_str.push_str("?return_to=");
-        local_var_uri_str.push_str(&local_var_str);
+    if let Some(ref str) = return_to {
+        uri_str.push_str("?return_to=");
+        uri_str.push_str(&str);
     }
 
-    local_var_client.set_body(&JsValue::from_serde(
+    client.set_body(&JsValue::from_serde(
         &create_recovery_link_for_identity_body,
     )?);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
-    local_var_req_builder
+    req_builder.headers().set("Accept", "application/json")?;
+    req_builder
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<CreateRecoveryLinkForIdentityError> =
-            local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<CreateRecoveryLinkForIdentityError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -524,76 +472,63 @@ pub async fn delete_identity(
     configuration: &configuration::Configuration,
     id: &str,
 ) -> Result<(), Error<DeleteIdentityError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("DELETE");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("DELETE");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len =
-        local_var_configuration.base_path.len() + "/admin/identities/".len() + id.len();
+    let possible_uri_len = configuration.base_path.len() + "/admin/identities/".len() + id.len();
 
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities/");
-    local_var_uri_str.push_str(&id);
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities/");
+    uri_str.push_str(&id);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
+    if !(400..600).contains(&status) {
         Ok(())
     } else {
-        let local_var_entity: Option<DeleteIdentityError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<DeleteIdentityError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -604,88 +539,75 @@ pub async fn delete_identity_credentials(
     r#type: &str,
     identifier: Option<&str>,
 ) -> Result<(), Error<DeleteIdentityCredentialsError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("DELETE");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("DELETE");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len = (local_var_configuration.base_path.len() * 2)
+    let possible_uri_len = (configuration.base_path.len() * 2)
         + "/admin/identities/".len()
         + id.len()
         + "/credentials/".len()
         + r#type.len()
         + "?identifier=".len();
 
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities/");
-    local_var_uri_str.push_str(&id);
-    local_var_uri_str.push_str("/credentials/");
-    local_var_uri_str.push_str(r#type);
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities/");
+    uri_str.push_str(&id);
+    uri_str.push_str("/credentials/");
+    uri_str.push_str(r#type);
 
-    if let Some(ref local_var_str) = identifier {
-        local_var_uri_str.push_str("?identifier=");
-        local_var_uri_str.push_str(&local_var_str);
+    if let Some(ref str) = identifier {
+        uri_str.push_str("?identifier=");
+        uri_str.push_str(&str);
     }
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
+    if !(400..600).contains(&status) {
         Ok(())
     } else {
-        let local_var_entity: Option<DeleteIdentityCredentialsError> =
-            local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<DeleteIdentityCredentialsError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -694,80 +616,65 @@ pub async fn delete_identity_sessions(
     configuration: &configuration::Configuration,
     id: &str,
 ) -> Result<(), Error<DeleteIdentitySessionsError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("DELETE");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("DELETE");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len = local_var_configuration.base_path.len()
-        + "/admin/identities/".len()
-        + id.len()
-        + "/sessions".len();
+    let possible_uri_len =
+        configuration.base_path.len() + "/admin/identities/".len() + id.len() + "/sessions".len();
 
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities/");
-    local_var_uri_str.push_str(&id);
-    local_var_uri_str.push_str("/sessions");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities/");
+    uri_str.push_str(&id);
+    uri_str.push_str("/sessions");
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
+    if !(400..600).contains(&status) {
         Ok(())
     } else {
-        let local_var_entity: Option<DeleteIdentitySessionsError> =
-            local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<DeleteIdentitySessionsError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -776,76 +683,63 @@ pub async fn disable_session(
     configuration: &configuration::Configuration,
     id: &str,
 ) -> Result<(), Error<DisableSessionError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("DELETE");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("DELETE");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len =
-        local_var_configuration.base_path.len() + "/admin/sessions/".len() + id.len();
+    let possible_uri_len = configuration.base_path.len() + "/admin/sessions/".len() + id.len();
 
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/sessions/");
-    local_var_uri_str.push_str(&id);
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/sessions/");
+    uri_str.push_str(&id);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
+    if !(400..600).contains(&status) {
         Ok(())
     } else {
-        let local_var_entity: Option<DisableSessionError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<DisableSessionError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -854,79 +748,65 @@ pub async fn extend_session(
     configuration: &configuration::Configuration,
     id: &str,
 ) -> Result<models::Session, Error<ExtendSessionError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("PATCH");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("PATCH");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len = local_var_configuration.base_path.len()
-        + "/admin/sessions/".len()
-        + id.len()
-        + "/extend".len();
+    let possible_uri_len =
+        configuration.base_path.len() + "/admin/sessions/".len() + id.len() + "/extend".len();
 
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/sessions/");
-    local_var_uri_str.push_str(&id);
-    local_var_uri_str.push_str("/extend");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/sessions/");
+    uri_str.push_str(&id);
+    uri_str.push_str("/extend");
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<ExtendSessionError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<ExtendSessionError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -936,90 +816,78 @@ pub async fn get_identity(
     id: &str,
     include_credential: Option<Vec<String>>,
 ) -> Result<models::Identity, Error<GetIdentityError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len = local_var_configuration.base_path.len()
+    let possible_uri_len = configuration.base_path.len()
         + "/admin/identities/".len()
         + id.len()
         + "?include_credential=".len();
 
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities/");
-    local_var_uri_str.push_str(&id);
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities/");
+    uri_str.push_str(&id);
 
-    if let Some(ref local_var_str_vec) = include_credential {
-        local_var_uri_str.push_str("?include_credential=");
-        let local_var_str = &local_var_str_vec
+    if let Some(ref str_vec) = include_credential {
+        uri_str.push_str("?include_credential=");
+        let str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
             .join(",")
             .to_string();
 
-        local_var_uri_str.push_str(local_var_str);
+        uri_str.push_str(str);
     }
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<GetIdentityError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<GetIdentityError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -1028,64 +896,54 @@ pub async fn get_identity_schema(
     configuration: &configuration::Configuration,
     id: &str,
 ) -> Result<serde_json::Value, Error<GetIdentitySchemaError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len = local_var_configuration.base_path.len() + "/schemas/".len() + id.len();
+    let possible_uri_len = configuration.base_path.len() + "/schemas/".len() + id.len();
 
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/schemas/");
-    local_var_uri_str.push_str(&id);
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/schemas/");
+    uri_str.push_str(&id);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<GetIdentitySchemaError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<GetIdentitySchemaError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -1095,90 +953,76 @@ pub async fn get_session(
     id: &str,
     expand: Option<Vec<String>>,
 ) -> Result<models::Session, Error<GetSessionError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len = local_var_configuration.base_path.len()
-        + "/admin/sessions/".len()
-        + id.len()
-        + "?expand=".len();
+    let possible_uri_len =
+        configuration.base_path.len() + "/admin/sessions/".len() + id.len() + "?expand=".len();
 
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/sessions/");
-    local_var_uri_str.push_str(&id);
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/sessions/");
+    uri_str.push_str(&id);
 
-    if let Some(ref local_var_str_vec) = expand {
-        local_var_uri_str.push_str("?expand=");
-        let local_var_str = &local_var_str_vec
+    if let Some(ref str_vec) = expand {
+        uri_str.push_str("?expand=");
+        let str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
             .join(",")
             .to_string();
 
-        local_var_uri_str.push_str(local_var_str);
+        uri_str.push_str(str);
     }
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<GetSessionError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<GetSessionError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -1196,14 +1040,14 @@ pub async fn list_identities(
     include_credential: Option<Vec<String>>,
     organization_id: Option<&str>,
 ) -> Result<Vec<models::Identity>, Error<ListIdentitiesError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
-    let possible_uri_len = local_var_configuration.base_path.len()
+    let possible_uri_len = configuration.base_path.len()
         + "/admin/identities".len()
         + "per_page".len()
         + i64::MAX.to_string().len()
@@ -1219,124 +1063,104 @@ pub async fn list_identities(
         + "include_credential".len()
         + "organization_id".len()
         + 20;
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities");
 
     let mut is_first_query: bool = true;
 
-    if let Some(ref local_var_str) = per_page {
-        local_var_uri_str.add_query(&mut is_first_query, "per_page=", &local_var_str.to_string());
+    if let Some(ref str) = per_page {
+        uri_str.add_query(&mut is_first_query, "per_page=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page {
-        local_var_uri_str.add_query(&mut is_first_query, "page=", &local_var_str.to_string());
+    if let Some(ref str) = page {
+        uri_str.add_query(&mut is_first_query, "page=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page_size {
-        local_var_uri_str.add_query(
-            &mut is_first_query,
-            "page_size=",
-            &local_var_str.to_string(),
-        );
+    if let Some(ref str) = page_size {
+        uri_str.add_query(&mut is_first_query, "page_size=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page_token {
-        local_var_uri_str.add_query(&mut is_first_query, "page_token=", &local_var_str);
+    if let Some(ref str) = page_token {
+        uri_str.add_query(&mut is_first_query, "page_token=", &str);
     };
-    if let Some(ref local_var_str) = consistency {
-        local_var_uri_str.add_query(&mut is_first_query, "consistency=", &local_var_str);
+    if let Some(ref str) = consistency {
+        uri_str.add_query(&mut is_first_query, "consistency=", &str);
     };
-    if let Some(ref local_var_str_vec) = ids {
-        let local_var_str = &local_var_str_vec
+    if let Some(ref str_vec) = ids {
+        let str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
             .join(",")
             .to_string();
 
-        local_var_uri_str.add_query(&mut is_first_query, "ids=", &local_var_str);
+        uri_str.add_query(&mut is_first_query, "ids=", &str);
     }
-    if let Some(ref local_var_str) = credentials_identifier {
-        local_var_uri_str.add_query(
-            &mut is_first_query,
-            "credentials_identifier=",
-            &local_var_str,
-        );
+    if let Some(ref str) = credentials_identifier {
+        uri_str.add_query(&mut is_first_query, "credentials_identifier=", &str);
     }
-    if let Some(ref local_var_str) = preview_credentials_identifier_similar {
-        local_var_uri_str.add_query(
+    if let Some(ref str) = preview_credentials_identifier_similar {
+        uri_str.add_query(
             &mut is_first_query,
             "preview_credentials_identifier_similar=",
-            &local_var_str,
+            &str,
         );
     }
-    if let Some(ref local_var_str_vec) = include_credential {
-        local_var_uri_str.push_str("?include_credential=");
-        let local_var_str = &local_var_str_vec
+    if let Some(ref str_vec) = include_credential {
+        uri_str.push_str("?include_credential=");
+        let str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
             .join(",")
             .to_string();
 
-        local_var_uri_str.push_str(local_var_str);
+        uri_str.push_str(str);
     }
-    if let Some(ref local_var_str) = organization_id {
-        local_var_uri_str.add_query(&mut is_first_query, "organization_id=", &local_var_str);
-    }
-
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
-
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref str) = organization_id {
+        uri_str.add_query(&mut is_first_query, "organization_id=", &str);
     }
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
+    }
+
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<ListIdentitiesError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<ListIdentitiesError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -1348,14 +1172,14 @@ pub async fn list_identity_schemas(
     page_size: Option<i64>,
     page_token: Option<&str>,
 ) -> Result<Vec<models::IdentitySchemaContainer>, Error<ListIdentitySchemasError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
-    let possible_uri_len = local_var_configuration.base_path.len()
+    let possible_uri_len = configuration.base_path.len()
         + "/schemas".len()
         + "per_page".len()
         + i64::MAX.to_string().len()
@@ -1365,73 +1189,58 @@ pub async fn list_identity_schemas(
         + i64::MAX.to_string().len()
         + "page_token".len()
         + 8;
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/schemas");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/schemas");
 
     let mut is_first_query: bool = true;
 
-    if let Some(ref local_var_str) = per_page {
-        local_var_uri_str.add_query(&mut is_first_query, "per_page=", &local_var_str.to_string());
+    if let Some(ref str) = per_page {
+        uri_str.add_query(&mut is_first_query, "per_page=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page {
-        local_var_uri_str.add_query(&mut is_first_query, "page=", &local_var_str.to_string());
+    if let Some(ref str) = page {
+        uri_str.add_query(&mut is_first_query, "page=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page_size {
-        local_var_uri_str.add_query(
-            &mut is_first_query,
-            "page_size=",
-            &local_var_str.to_string(),
-        );
+    if let Some(ref str) = page_size {
+        uri_str.add_query(&mut is_first_query, "page_size=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page_token {
-        local_var_uri_str.add_query(&mut is_first_query, "page_token=", &local_var_str);
+    if let Some(ref str) = page_token {
+        uri_str.add_query(&mut is_first_query, "page_token=", &str);
     };
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<ListIdentitySchemasError> =
-            local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<ListIdentitySchemasError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -1445,15 +1254,15 @@ pub async fn list_identity_sessions(
     page_token: Option<&str>,
     active: Option<bool>,
 ) -> Result<Vec<models::Session>, Error<ListIdentitySessionsError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len = local_var_configuration.base_path.len()
+    let possible_uri_len = configuration.base_path.len()
         + "/admin/identities/".len()
         + id.len()
         + "/sessions".len()
@@ -1466,89 +1275,72 @@ pub async fn list_identity_sessions(
         + "page_token".len()
         + "active".len()
         + 10;
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities/");
-    local_var_uri_str.push_str(&id);
-    local_var_uri_str.push_str("/sessions");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities/");
+    uri_str.push_str(&id);
+    uri_str.push_str("/sessions");
 
     let mut is_first_query: bool = true;
 
-    if let Some(ref local_var_str) = per_page {
-        local_var_uri_str.add_query(&mut is_first_query, "per_page=", &local_var_str.to_string());
+    if let Some(ref str) = per_page {
+        uri_str.add_query(&mut is_first_query, "per_page=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page {
-        local_var_uri_str.add_query(&mut is_first_query, "page=", &local_var_str.to_string());
+    if let Some(ref str) = page {
+        uri_str.add_query(&mut is_first_query, "page=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page_size {
-        local_var_uri_str.add_query(
-            &mut is_first_query,
-            "page_size=",
-            &local_var_str.to_string(),
-        );
+    if let Some(ref str) = page_size {
+        uri_str.add_query(&mut is_first_query, "page_size=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page_token {
-        local_var_uri_str.add_query(&mut is_first_query, "page_token=", &local_var_str);
+    if let Some(ref str) = page_token {
+        uri_str.add_query(&mut is_first_query, "page_token=", &str);
     };
-    if let Some(ref local_var_str) = active {
-        local_var_uri_str.add_query(&mut is_first_query, "active=", &local_var_str.to_string());
+    if let Some(ref str) = active {
+        uri_str.add_query(&mut is_first_query, "active=", &str.to_string());
     }
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<ListIdentitySessionsError> =
-            local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<ListIdentitySessionsError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -1560,14 +1352,14 @@ pub async fn list_sessions(
     active: Option<bool>,
     expand: Option<Vec<String>>,
 ) -> Result<Vec<models::Session>, Error<ListSessionsError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
-    let possible_uri_len = local_var_configuration.base_path.len()
+    let possible_uri_len = configuration.base_path.len()
         + "/admin/sessions".len()
         + "page_size".len()
         + i64::MAX.to_string().len()
@@ -1575,90 +1367,74 @@ pub async fn list_sessions(
         + "active".len()
         + "expand".len()
         + 13;
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/sessions");
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/sessions");
 
     let mut is_first_query: bool = true;
 
-    if let Some(ref local_var_str) = page_size {
-        local_var_uri_str.add_query(
-            &mut is_first_query,
-            "page_size=",
-            &local_var_str.to_string(),
-        );
+    if let Some(ref str) = page_size {
+        uri_str.add_query(&mut is_first_query, "page_size=", &str.to_string());
     }
-    if let Some(ref local_var_str) = page_token {
-        local_var_uri_str.add_query(&mut is_first_query, "page_token=", &local_var_str);
+    if let Some(ref str) = page_token {
+        uri_str.add_query(&mut is_first_query, "page_token=", &str);
     };
-    if let Some(ref local_var_str) = active {
-        local_var_uri_str.add_query(&mut is_first_query, "active=", &local_var_str.to_string());
+    if let Some(ref str) = active {
+        uri_str.add_query(&mut is_first_query, "active=", &str.to_string());
     }
-    if let Some(ref local_var_str_vec) = expand {
-        let local_var_str = &local_var_str_vec
+    if let Some(ref str_vec) = expand {
+        let str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
             .join(",")
             .to_string();
 
-        local_var_uri_str.add_query(&mut is_first_query, "expand=", &local_var_str);
+        uri_str.add_query(&mut is_first_query, "expand=", &str);
     }
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<ListSessionsError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<ListSessionsError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -1668,80 +1444,67 @@ pub async fn patch_identity(
     id: &str,
     json_patch: Option<Vec<models::JsonPatch>>,
 ) -> Result<models::Identity, Error<PatchIdentityError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("PATCH");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("PATCH");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len =
-        local_var_configuration.base_path.len() + "/admin/identities/".len() + id.len();
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let possible_uri_len = configuration.base_path.len() + "/admin/identities/".len() + id.len();
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities/");
-    local_var_uri_str.push_str(&id);
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities/");
+    uri_str.push_str(&id);
 
-    local_var_client.set_body(&JsValue::from_serde(&json_patch)?);
+    client.set_body(&JsValue::from_serde(&json_patch)?);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
-    local_var_req_builder
+    req_builder.headers().set("Accept", "application/json")?;
+    req_builder
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<PatchIdentityError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<PatchIdentityError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -1751,79 +1514,66 @@ pub async fn update_identity(
     id: &str,
     update_identity_body: Option<models::UpdateIdentityBody>,
 ) -> Result<models::Identity, Error<UpdateIdentityError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("PUT");
-    local_var_client.set_mode(RequestMode::Cors);
-    local_var_client.set_credentials(RequestCredentials::SameOrigin);
+    let client = RequestInit::new();
+    client.set_method("PUT");
+    client.set_mode(RequestMode::Cors);
+    client.set_credentials(RequestCredentials::SameOrigin);
 
     let id = crate::wasm_apis::urlencode(id);
-    let possible_uri_len =
-        local_var_configuration.base_path.len() + "/admin/identities/".len() + id.len();
-    let mut local_var_uri_str = String::with_capacity(possible_uri_len);
+    let possible_uri_len = configuration.base_path.len() + "/admin/identities/".len() + id.len();
+    let mut uri_str = String::with_capacity(possible_uri_len);
 
-    local_var_uri_str.push_str(&local_var_configuration.base_path);
-    local_var_uri_str.push_str("/admin/identities/");
-    local_var_uri_str.push_str(&id);
+    uri_str.push_str(&configuration.base_path);
+    uri_str.push_str("/admin/identities/");
+    uri_str.push_str(&id);
 
-    local_var_client.set_body(&JsValue::from_serde(&update_identity_body)?);
+    client.set_body(&JsValue::from_serde(&update_identity_body)?);
 
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_apikey) = local_var_configuration.api_key {
-        let local_var_key = local_var_apikey.key.clone();
-        let local_var_value = match local_var_apikey.prefix {
-            Some(ref local_var_prefix) => format!("{} {}", local_var_prefix, local_var_key),
-            None => local_var_key,
+    if let Some(ref apikey) = configuration.api_key {
+        let key = apikey.key.clone();
+        let value = match apikey.prefix {
+            Some(ref prefix) => format!("{} {}", prefix, key),
+            None => key,
         };
-        local_var_req_builder
-            .headers()
-            .set("Authorization", &local_var_value)?;
+        req_builder.headers().set("Authorization", &value)?;
     };
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
-    local_var_req_builder
+    req_builder.headers().set("Accept", "application/json")?;
+    req_builder
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<UpdateIdentityError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<UpdateIdentityError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }

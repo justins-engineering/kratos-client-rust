@@ -44,55 +44,45 @@ pub enum IsReadyError {
 pub async fn get_version(
     configuration: &configuration::Configuration,
 ) -> Result<models::GetVersion200Response, Error<GetVersionError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
 
-    let local_var_uri_str = format!("{}/version", local_var_configuration.base_path);
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let uri_str = format!("{}/version", configuration.base_path);
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<GetVersionError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<GetVersionError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -100,55 +90,45 @@ pub async fn get_version(
 pub async fn is_alive(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsAliveError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
 
-    let local_var_uri_str = format!("{}/health/ready", local_var_configuration.base_path);
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let uri_str = format!("{}/health/ready", configuration.base_path);
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<IsAliveError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<IsAliveError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
 
@@ -156,54 +136,44 @@ pub async fn is_alive(
 pub async fn is_ready(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsReadyError>> {
-    let local_var_configuration = configuration;
+    let configuration = configuration;
 
-    let local_var_client = RequestInit::new();
-    local_var_client.set_method("GET");
-    local_var_client.set_mode(RequestMode::Cors);
+    let client = RequestInit::new();
+    client.set_method("GET");
+    client.set_mode(RequestMode::Cors);
 
-    let local_var_uri_str = format!("{}/health/ready", local_var_configuration.base_path);
-    let local_var_req_builder =
-        Request::new_with_str_and_init(&local_var_uri_str, &local_var_client)?;
+    let uri_str = format!("{}/health/ready", configuration.base_path);
+    let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder
-            .headers()
-            .set("USER_AGENT", local_var_user_agent)?;
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder.headers().set("USER_AGENT", user_agent)?;
     }
 
-    local_var_req_builder
-        .headers()
-        .set("Accept", "application/json")?;
+    req_builder.headers().set("Accept", "application/json")?;
 
-    let local_var_req = JsFuture::from(
-        web_sys::window()
-            .unwrap()
-            .fetch_with_request(&local_var_req_builder),
-    )
-    .await?;
+    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
-    assert!(local_var_req.is_instance_of::<Response>());
-    let local_var_resp: Response = local_var_req.dyn_into().unwrap();
+    assert!(req.is_instance_of::<Response>());
+    let resp: Response = req.dyn_into().unwrap();
 
-    let local_var_status = local_var_resp.status();
-    let local_var_content = JsFuture::from(local_var_resp.json()?).await?;
+    let status = resp.status();
+    let content = JsFuture::from(resp.json()?).await?;
 
-    if !(400..600).contains(&local_var_status) {
-        local_var_content.into_serde().map_err(Error::from)
+    if !(400..600).contains(&status) {
+        content.into_serde().map_err(Error::from)
     } else {
-        let local_var_entity: Option<IsReadyError> = local_var_content.into_serde().ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: if local_var_content.is_undefined() {
+        let entity: Option<IsReadyError> = content.into_serde().ok();
+        let error = ResponseContent {
+            status: status,
+            content: if content.is_undefined() {
                 String::from("null")
             } else {
-                web_sys::js_sys::JSON::stringify(&local_var_content)
+                web_sys::js_sys::JSON::stringify(&content)
                     .map(String::from)
                     .unwrap_throw()
             },
-            entity: local_var_entity,
+            entity: entity,
         };
-        Err(Error::ResponseError(local_var_error))
+        Err(Error::ResponseError(error))
     }
 }
