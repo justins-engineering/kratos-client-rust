@@ -102,7 +102,6 @@ pub async fn get_courier_message(
             }
         }
     } else {
-        let content = JsFuture::from(resp.json()?).await?;
         let entity: Option<GetCourierMessageError> = content.into_serde().ok();
         Err(Error::ResponseError(ResponseContent {
             status,
@@ -204,7 +203,6 @@ pub async fn list_courier_messages(
             }
         }
     } else {
-        let content = JsFuture::from(resp.json()?).await?;
         let entity: Option<ListCourierMessagesError> = content.into_serde().ok();
         Err(Error::ResponseError(ResponseContent {
             status,
