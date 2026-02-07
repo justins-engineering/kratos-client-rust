@@ -3,9 +3,9 @@
 #[cfg(all(feature = "wasm", feature = "reqwest"))]
 compile_error!("feature \"wasm\" and feature \"reqwest\" cannot be enabled at the same time");
 
-extern crate serde_repr;
 extern crate serde;
 extern crate serde_json;
+extern crate serde_repr;
 extern crate url;
 
 #[cfg(feature = "reqwest")]

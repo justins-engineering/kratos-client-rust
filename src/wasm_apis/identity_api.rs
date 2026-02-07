@@ -908,14 +908,15 @@ pub async fn get_identity(
 
     if let Some(ref str_vec) = include_credential {
         uri_str.push_str("?include_credential=");
-        let str = &str_vec
+
+        let cred_str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
-            .join(",")
+            .join("&include_credential=")
             .to_string();
 
-        uri_str.push_str(str);
+        uri_str.push_str(cred_str);
     }
 
     let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
@@ -1004,14 +1005,15 @@ pub async fn get_identity_by_external_id(
 
     if let Some(ref str_vec) = include_credential {
         uri_str.push_str("?include_credential=");
-        let str = &str_vec
+
+        let cred_str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
-            .join(",")
+            .join("&include_credential=")
             .to_string();
 
-        uri_str.push_str(str);
+        uri_str.push_str(cred_str);
     }
 
     let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
@@ -1169,14 +1171,15 @@ pub async fn get_session(
 
     if let Some(ref str_vec) = expand {
         uri_str.push_str("?expand=");
-        let str = &str_vec
+
+        let expand_str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
-            .join(",")
+            .join("&expand=")
             .to_string();
 
-        uri_str.push_str(str);
+        uri_str.push_str(expand_str);
     }
 
     let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
@@ -1298,14 +1301,14 @@ pub async fn list_identities(
         uri_str.add_query(&mut is_first_query, "consistency=", &str);
     };
     if let Some(ref str_vec) = ids {
-        let str = &str_vec
+        let id_str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
-            .join(",")
+            .join("&ids=")
             .to_string();
 
-        uri_str.add_query(&mut is_first_query, "ids=", &str);
+        uri_str.add_query(&mut is_first_query, "ids=", &id_str);
     }
     if let Some(ref str) = credentials_identifier {
         uri_str.add_query(&mut is_first_query, "credentials_identifier=", &str);
@@ -1318,15 +1321,14 @@ pub async fn list_identities(
         );
     }
     if let Some(ref str_vec) = include_credential {
-        uri_str.push_str("?include_credential=");
-        let str = &str_vec
+        let cred_str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
-            .join(",")
+            .join("&include_credential=")
             .to_string();
 
-        uri_str.push_str(str);
+        uri_str.add_query(&mut is_first_query, "include_credential=", &cred_str);
     }
     if let Some(ref str) = organization_id {
         uri_str.add_query(&mut is_first_query, "organization_id=", &str);
@@ -1641,14 +1643,14 @@ pub async fn list_sessions(
         uri_str.add_query(&mut is_first_query, "active=", &str.to_string());
     }
     if let Some(ref str_vec) = expand {
-        let str = &str_vec
+        let expand_str = &str_vec
             .into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>()
-            .join(",")
+            .join("&expand=")
             .to_string();
 
-        uri_str.add_query(&mut is_first_query, "expand=", &str);
+        uri_str.add_query(&mut is_first_query, "expand=", &expand_str);
     }
 
     let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
