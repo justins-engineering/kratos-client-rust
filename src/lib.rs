@@ -25,5 +25,7 @@ pub mod apis;
 
 #[cfg(feature = "wasm")]
 pub mod wasm_apis;
+#[cfg(feature = "wasm")]
+pub use wasm_apis as apis;
 
 pub mod models;

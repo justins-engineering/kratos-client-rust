@@ -11,7 +11,7 @@ API version: v25.4.0
 For feature parity with the official lib, add the following line to your `Cargo.toml`:
 
 ```toml
-ory-kratos-client-wasm = { version = "25.4.0", default-features = false, features = ["reqwest"] }
+ory-kratos-client-wasm = { version = "0.2", default-features = false, features = ["reqwest"] }
 ```
 
 ## Ory Self-Hosted

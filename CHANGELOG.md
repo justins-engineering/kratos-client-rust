@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-02-07
+
+### Added
+
+- Upstream changes
+- `query` feature to reqwest
+- `ContentType` enum from upstream
+- `Missing` type to `ContentType`
+- `impl From<&web_sys::Response> for ContentType`
+
+### Changed
+
+- Update API version to v25.4.0
+- Updated dependencies
+- Seperated wasm and reqwest code for easier merge
+- Re-export `wasm_apis` as `apis`
+- Identies API multi-params each get their own key instead of being passed as array
+- `ContentType` based error messages
+
+### Removed
+
+- All `local_var_` prefixes
+- Stand-alone `add_query` function
+
 ## [0.1.6] - 2025-09-22
 
 ### Changed
@@ -77,7 +101,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Cargo.toml info and edition
 
 
-[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.6...master
+[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.0...master
+[0.2.0]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.6...v0.2.0
 [0.1.6]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.3...v0.1.4
