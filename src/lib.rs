@@ -5,6 +5,7 @@ compile_error!("feature \"wasm\" and feature \"reqwest\" cannot be enabled at th
 
 extern crate serde;
 extern crate serde_json;
+extern crate serde_repr;
 extern crate url;
 
 #[cfg(feature = "reqwest")]
@@ -19,5 +20,10 @@ extern crate wasm_bindgen_futures;
 #[cfg(feature = "wasm")]
 extern crate web_sys;
 
+#[cfg(feature = "reqwest")]
 pub mod apis;
+
+#[cfg(feature = "wasm")]
+pub mod wasm_apis;
+
 pub mod models;
