@@ -400,7 +400,7 @@ pub async fn create_browser_login_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -408,7 +408,7 @@ pub async fn create_browser_login_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -487,7 +487,7 @@ pub async fn create_browser_logout_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -495,7 +495,7 @@ pub async fn create_browser_logout_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -570,7 +570,7 @@ pub async fn create_browser_recovery_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -578,7 +578,7 @@ pub async fn create_browser_recovery_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -674,7 +674,7 @@ pub async fn create_browser_registration_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -682,7 +682,7 @@ pub async fn create_browser_registration_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -761,7 +761,7 @@ pub async fn create_browser_settings_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -769,7 +769,7 @@ pub async fn create_browser_settings_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -844,7 +844,7 @@ pub async fn create_browser_verification_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -852,7 +852,7 @@ pub async fn create_browser_verification_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -919,7 +919,7 @@ pub async fn create_fedcm_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -927,7 +927,7 @@ pub async fn create_fedcm_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1004,7 +1004,7 @@ pub async fn disable_my_other_sessions(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1012,7 +1012,7 @@ pub async fn disable_my_other_sessions(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1092,7 +1092,7 @@ pub async fn disable_my_session(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1100,7 +1100,7 @@ pub async fn disable_my_session(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content = JsFuture::from(resp.json()?).await?;
@@ -1161,7 +1161,7 @@ pub async fn exchange_session_token(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1169,7 +1169,7 @@ pub async fn exchange_session_token(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1241,7 +1241,7 @@ pub async fn get_flow_error(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1249,7 +1249,7 @@ pub async fn get_flow_error(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1325,7 +1325,7 @@ pub async fn get_login_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1333,7 +1333,7 @@ pub async fn get_login_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1411,7 +1411,7 @@ pub async fn get_recovery_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1419,7 +1419,7 @@ pub async fn get_recovery_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1497,7 +1497,7 @@ pub async fn get_registration_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1505,7 +1505,7 @@ pub async fn get_registration_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1589,7 +1589,7 @@ pub async fn get_settings_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1597,7 +1597,7 @@ pub async fn get_settings_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1675,7 +1675,7 @@ pub async fn get_verification_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1683,7 +1683,7 @@ pub async fn get_verification_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1750,7 +1750,7 @@ pub async fn get_web_authn_java_script(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1758,7 +1758,7 @@ pub async fn get_web_authn_java_script(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1860,7 +1860,7 @@ pub async fn list_my_sessions(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1868,7 +1868,7 @@ pub async fn list_my_sessions(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1952,7 +1952,7 @@ pub async fn to_session(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -1960,7 +1960,7 @@ pub async fn to_session(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -2032,7 +2032,7 @@ pub async fn update_fedcm_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -2040,7 +2040,7 @@ pub async fn update_fedcm_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -2128,7 +2128,7 @@ pub async fn update_login_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -2136,7 +2136,7 @@ pub async fn update_login_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -2222,7 +2222,7 @@ pub async fn update_logout_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -2230,7 +2230,7 @@ pub async fn update_logout_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content = JsFuture::from(resp.json()?).await?;
@@ -2303,7 +2303,7 @@ pub async fn update_recovery_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -2311,7 +2311,7 @@ pub async fn update_recovery_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -2395,7 +2395,7 @@ pub async fn update_registration_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -2403,7 +2403,7 @@ pub async fn update_registration_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -2493,7 +2493,7 @@ pub async fn update_settings_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -2501,7 +2501,7 @@ pub async fn update_settings_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -2592,7 +2592,7 @@ pub async fn update_verification_flow(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -2600,7 +2600,7 @@ pub async fn update_verification_flow(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);

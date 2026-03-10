@@ -62,7 +62,7 @@ pub async fn get_version(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -125,7 +125,7 @@ pub async fn is_alive(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -188,7 +188,7 @@ pub async fn is_ready(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);

@@ -73,7 +73,7 @@ pub async fn get_courier_message(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -81,7 +81,7 @@ pub async fn get_courier_message(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type: ContentType = super::ContentType::from(&resp);
@@ -181,7 +181,7 @@ pub async fn list_courier_messages(
 
     let req = JsFuture::from(
         web_sys::window()
-            .expect_throw("Failed to get Window object")
+            .expect("Failed to get Window object")
             .fetch_with_request(&req_builder),
     )
     .await?;
@@ -189,7 +189,7 @@ pub async fn list_courier_messages(
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
         .dyn_into()
-        .expect_throw("Failed to dynamically cast JsFuture into Response");
+        .expect("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type: ContentType = super::ContentType::from(&resp);
