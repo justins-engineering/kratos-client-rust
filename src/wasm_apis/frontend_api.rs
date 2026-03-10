@@ -14,7 +14,7 @@ use gloo_utils::format::JsValueSerdeExt;
 use serde::{Deserialize, Serialize, de::Error as _};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{Request, RequestCredentials, RequestInit, RequestMode, Response};
+use web_sys::{Request, RequestCredentials, RequestInit, RequestMode, Response, console};
 
 /// struct for typed errors of method [`create_browser_login_flow`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1929,7 +1929,8 @@ pub async fn to_session(
     uri_str.push_str(&configuration.base_path);
     uri_str.push_str("/sessions/whoami");
 
-    if let Some(ref str) = tokenize_as {
+    if let Some(str) = tokenize_as {
+        console::debug_2(&"tokenize_as:".into(), &str.into());
         uri_str.push_str("?tokenize_as=");
         uri_str.push_str(&str);
     }
@@ -1937,12 +1938,15 @@ pub async fn to_session(
     let req_builder = Request::new_with_str_and_init(&uri_str, &client)?;
 
     if let Some(ref user_agent) = configuration.user_agent {
+        console::debug_2(&"user_agent:".into(), &user_agent.into());
         req_builder.headers().set("USER_AGENT", user_agent)?;
     }
     if let Some(cookie) = cookie {
+        console::debug_2(&"cookie:".into(), &cookie.into());
         req_builder.headers().set("Cookie", cookie)?;
     }
     if let Some(x_session_token) = x_session_token {
+        console::debug_2(&"x_session_token:".into(), &x_session_token.into());
         req_builder
             .headers()
             .set("X-Session-Token", x_session_token)?;
