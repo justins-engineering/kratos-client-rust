@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- wasm_apis
+  - `web_sys::window().unwrap()` to `web_sys::window().expect_throw("Failed to get Window object")`
+  - `req.dyn_into().unwrap()` to `req.dyn_into().expect_throw("Failed to dynamically cast JsFuture into Response")`
+
 ## [0.2.0] - 2026-02-07
 
 ### Added

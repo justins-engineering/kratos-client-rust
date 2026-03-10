@@ -239,7 +239,9 @@ pub async fn batch_patch_identities(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -321,7 +323,9 @@ pub async fn create_identity(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -405,7 +409,9 @@ pub async fn create_recovery_code_for_identity(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -496,7 +502,9 @@ pub async fn create_recovery_link_for_identity(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -576,7 +584,9 @@ pub async fn delete_identity(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content = JsFuture::from(resp.json()?).await?;
@@ -652,7 +662,9 @@ pub async fn delete_identity_credentials(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content = JsFuture::from(resp.json()?).await?;
@@ -716,7 +728,9 @@ pub async fn delete_identity_sessions(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content = JsFuture::from(resp.json()?).await?;
@@ -778,7 +792,9 @@ pub async fn disable_session(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content = JsFuture::from(resp.json()?).await?;
@@ -842,7 +858,9 @@ pub async fn extend_session(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -939,7 +957,9 @@ pub async fn get_identity(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1036,7 +1056,9 @@ pub async fn get_identity_by_external_id(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1107,7 +1129,9 @@ pub async fn get_identity_schema(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1202,7 +1226,9 @@ pub async fn get_session(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1354,7 +1380,9 @@ pub async fn list_identities(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1449,7 +1477,9 @@ pub async fn list_identity_schemas(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1564,7 +1594,9 @@ pub async fn list_identity_sessions(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1673,7 +1705,9 @@ pub async fn list_sessions(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1758,7 +1792,9 @@ pub async fn patch_identity(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
@@ -1843,7 +1879,9 @@ pub async fn update_identity(
     let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
 
     assert!(req.is_instance_of::<Response>());
-    let resp: Response = req.dyn_into().unwrap();
+    let resp: Response = req
+        .dyn_into()
+        .expect_throw("Failed to dynamically cast JsFuture into Response");
 
     let status = resp.status();
     let content_type = super::ContentType::from(&resp);
