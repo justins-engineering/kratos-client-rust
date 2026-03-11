@@ -11,9 +11,9 @@ extern crate url;
 #[cfg(feature = "reqwest")]
 extern crate reqwest;
 
-#[cfg(feature = "wasm")]
+#[cfg(any(feature = "wasm", feature = "worker"))]
 extern crate gloo_utils;
-#[cfg(feature = "wasm")]
+#[cfg(any(feature = "wasm", feature = "worker"))]
 extern crate wasm_bindgen;
 #[cfg(feature = "wasm")]
 extern crate wasm_bindgen_futures;
@@ -27,5 +27,10 @@ pub mod apis;
 pub mod wasm_apis;
 #[cfg(feature = "wasm")]
 pub use wasm_apis as apis;
+
+#[cfg(feature = "worker")]
+pub mod worker_apis;
+#[cfg(feature = "worker")]
+pub use worker_apis as apis;
 
 pub mod models;
