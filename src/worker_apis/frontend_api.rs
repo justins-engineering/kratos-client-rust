@@ -13,7 +13,7 @@ use crate::{models, worker_apis::ResponseContent};
 use gloo_utils::format::JsValueSerdeExt;
 use serde::{Deserialize, Serialize, de::Error as _};
 use wasm_bindgen::prelude::*;
-use worker::{Fetch, Headers, Method, Request, RequestInit, Response};
+use worker::{Fetch, Headers, Method, Request, RequestInit, Response, console_warn};
 
 /// struct for typed errors of method [`create_browser_login_flow`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1820,7 +1820,7 @@ pub async fn to_session(
         headers.append("USER_AGENT", user_agent)?;
     }
     if let Some(cookie) = cookie {
-        headers.append("Cookie", cookie)?;
+        headers.set("Cookie", cookie)?;
     }
     if let Some(x_session_token) = x_session_token {
         headers.append("X-Session-Token", x_session_token)?;
@@ -1839,6 +1839,7 @@ pub async fn to_session(
     req_builder.with_headers(headers);
 
     let req = Request::new_with_init(&uri_str, &req_builder)?;
+    console_warn!("{:?}", req);
     let mut resp = Fetch::Request(req).send().await?;
 
     let status = resp.status_code();
