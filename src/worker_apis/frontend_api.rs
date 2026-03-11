@@ -381,7 +381,7 @@ pub async fn create_browser_login_flow(
         uri_str.add_query(&mut is_first_query, "identity_schema=", &str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -391,6 +391,10 @@ pub async fn create_browser_login_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -456,7 +460,7 @@ pub async fn create_browser_logout_flow(
         uri_str.push_str(&str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -466,6 +470,10 @@ pub async fn create_browser_logout_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -530,13 +538,17 @@ pub async fn create_browser_recovery_flow(
         uri_str.push_str(&str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -622,13 +634,17 @@ pub async fn create_browser_registration_flow(
         uri_str.add_query(&mut is_first_query, "identity_schema=", &str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -695,7 +711,7 @@ pub async fn create_browser_settings_flow(
         uri_str.push_str(&str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -705,6 +721,10 @@ pub async fn create_browser_settings_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -769,13 +789,17 @@ pub async fn create_browser_verification_flow(
         uri_str.push_str(&str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -833,13 +857,17 @@ pub async fn create_fedcm_flow(
     uri_str.push_str(&configuration.base_path);
     uri_str.push_str("/self-service/fed-cm/parameters");
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -898,7 +926,7 @@ pub async fn disable_my_other_sessions(
     uri_str.push_str(&configuration.base_path);
     uri_str.push_str("/sessions");
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -911,6 +939,10 @@ pub async fn disable_my_other_sessions(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Delete);
@@ -972,7 +1004,7 @@ pub async fn disable_my_session(
     uri_str.push_str("/sessions/");
     uri_str.push_str(&id);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -985,6 +1017,10 @@ pub async fn disable_my_session(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Delete);
@@ -1035,13 +1071,17 @@ pub async fn exchange_session_token(
     uri_str.push_str("&return_to_code=");
     uri_str.push_str(&return_to_code);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1103,13 +1143,17 @@ pub async fn get_flow_error(
     uri_str.push_str("?id=");
     uri_str.push_str(&id);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1172,7 +1216,7 @@ pub async fn get_login_flow(
     uri_str.push_str("?id=");
     uri_str.push_str(&id);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1182,6 +1226,10 @@ pub async fn get_login_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1246,7 +1294,7 @@ pub async fn get_recovery_flow(
     uri_str.push_str("?id=");
     uri_str.push_str(&id);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1256,6 +1304,10 @@ pub async fn get_recovery_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1320,7 +1372,7 @@ pub async fn get_registration_flow(
     uri_str.push_str("?id=");
     uri_str.push_str(&id);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1330,6 +1382,10 @@ pub async fn get_registration_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1395,7 +1451,7 @@ pub async fn get_settings_flow(
     uri_str.push_str("?id=");
     uri_str.push_str(&id);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1408,6 +1464,10 @@ pub async fn get_settings_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1472,7 +1532,7 @@ pub async fn get_verification_flow(
     uri_str.push_str("?id=");
     uri_str.push_str(&id);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1482,6 +1542,10 @@ pub async fn get_verification_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1538,13 +1602,17 @@ pub async fn get_web_authn_java_script(
     uri_str.push_str(&configuration.base_path);
     uri_str.push_str("/.well-known/ory/webauthn.js");
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1628,7 +1696,7 @@ pub async fn list_my_sessions(
         uri_str.add_query(&mut is_first_query, "page_token=", &str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1641,6 +1709,10 @@ pub async fn list_my_sessions(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1706,7 +1778,7 @@ pub async fn to_session(
         uri_str.push_str(&str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1719,6 +1791,10 @@ pub async fn to_session(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1775,13 +1851,17 @@ pub async fn update_fedcm_flow(
     uri_str.push_str(&configuration.base_path);
     uri_str.push_str("/self-service/fed-cm/token");
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -1848,7 +1928,7 @@ pub async fn update_login_flow(
     uri_str.push_str("?flow=");
     uri_str.push_str(&flow);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1861,6 +1941,10 @@ pub async fn update_login_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -1935,7 +2019,7 @@ pub async fn update_logout_flow(
         uri_str.add_query(&mut is_first_query, "token=", &str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -1945,6 +2029,10 @@ pub async fn update_logout_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1999,7 +2087,7 @@ pub async fn update_recovery_flow(
         uri_str.push_str(&str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -2009,6 +2097,10 @@ pub async fn update_recovery_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -2076,7 +2168,7 @@ pub async fn update_registration_flow(
     uri_str.push_str("?flow=");
     uri_str.push_str(&flow);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -2086,6 +2178,10 @@ pub async fn update_registration_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -2154,7 +2250,7 @@ pub async fn update_settings_flow(
     uri_str.push_str("?flow=");
     uri_str.push_str(&flow);
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -2167,6 +2263,10 @@ pub async fn update_settings_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -2241,7 +2341,7 @@ pub async fn update_verification_flow(
         uri_str.push_str(&str);
     }
 
-    let headers = Headers::new();
+    let mut headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -2251,6 +2351,10 @@ pub async fn update_verification_flow(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        cors.apply_headers(&mut headers)?;
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();

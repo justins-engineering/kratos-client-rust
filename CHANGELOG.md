@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `req.dyn_into().unwrap()` to `req.dyn_into().expect("Failed to dynamically cast JsFuture into Response")`
 
 - Add worker_apis for compatibility with workers-rs
+- Added worker::Cors field to Configuration struct in worker_apis
 
 ## [0.2.0] - 2026-02-07
 
