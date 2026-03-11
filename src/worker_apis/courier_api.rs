@@ -50,7 +50,7 @@ pub async fn get_courier_message(
     // req_builder.set_mode(RequestMode::Cors);
     // req_builder.set_credentials(RequestCredentials::Include);
 
-    let mut headers = Headers::new();
+    let headers = Headers::new();
     // let cors = Cors::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
@@ -69,7 +69,9 @@ pub async fn get_courier_message(
     headers.append("Accept", "application/json")?;
 
     if let Some(ref cors) = configuration.cors {
-        cors.apply_headers(&mut headers)?;
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
     }
 
     let mut req_builder = RequestInit::new();
@@ -149,7 +151,7 @@ pub async fn list_courier_messages(
         uri_str.add_query(&mut is_first_query, "recipient=", &str);
     }
 
-    let mut headers = Headers::new();
+    let headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -167,7 +169,9 @@ pub async fn list_courier_messages(
     headers.append("Accept", "application/json")?;
 
     if let Some(ref cors) = configuration.cors {
-        cors.apply_headers(&mut headers)?;
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
     }
 
     let mut req_builder = RequestInit::new();

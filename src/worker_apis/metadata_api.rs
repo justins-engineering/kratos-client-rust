@@ -43,7 +43,7 @@ pub async fn get_version(
     configuration: &configuration::Configuration,
 ) -> Result<models::GetVersion200Response, Error<GetVersionError>> {
     let uri_str = format!("{}/version", configuration.base_path);
-    let mut headers = Headers::new();
+    let headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -52,7 +52,9 @@ pub async fn get_version(
     headers.append("Accept", "application/json")?;
 
     if let Some(ref cors) = configuration.cors {
-        cors.apply_headers(&mut headers)?;
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
     }
 
     let mut req_builder = RequestInit::new();
@@ -104,7 +106,7 @@ pub async fn is_alive(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsAliveError>> {
     let uri_str = format!("{}/health/ready", configuration.base_path);
-    let mut headers = Headers::new();
+    let headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -113,7 +115,9 @@ pub async fn is_alive(
     headers.append("Accept", "application/json")?;
 
     if let Some(ref cors) = configuration.cors {
-        cors.apply_headers(&mut headers)?;
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
     }
 
     let mut req_builder = RequestInit::new();
@@ -165,7 +169,7 @@ pub async fn is_ready(
     configuration: &configuration::Configuration,
 ) -> Result<models::IsAlive200Response, Error<IsReadyError>> {
     let uri_str = format!("{}/health/ready", configuration.base_path);
-    let mut headers = Headers::new();
+    let headers = Headers::new();
 
     if let Some(ref user_agent) = configuration.user_agent {
         headers.append("USER_AGENT", user_agent)?;
@@ -174,7 +178,9 @@ pub async fn is_ready(
     headers.append("Accept", "application/json")?;
 
     if let Some(ref cors) = configuration.cors {
-        cors.apply_headers(&mut headers)?;
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
     }
 
     let mut req_builder = RequestInit::new();

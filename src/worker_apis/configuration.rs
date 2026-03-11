@@ -16,7 +16,7 @@ pub struct Configuration {
     pub oauth_access_token: Option<String>,
     pub bearer_access_token: Option<String>,
     pub api_key: Option<ApiKey>,
-    pub cors: Option<worker::Cors>,
+    pub cors: Option<worker::Headers>,
 }
 
 pub type BasicAuth = (String, Option<String>);

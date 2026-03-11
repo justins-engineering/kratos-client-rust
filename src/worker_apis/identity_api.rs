@@ -224,6 +224,12 @@ pub async fn batch_patch_identities(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -298,6 +304,12 @@ pub async fn create_identity(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -372,6 +384,12 @@ pub async fn create_recovery_code_for_identity(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -456,6 +474,12 @@ pub async fn create_recovery_link_for_identity(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -537,6 +561,12 @@ pub async fn delete_identity(
 
     headers.append("Accept", "application/json")?;
 
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
+
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Delete);
     req_builder.with_headers(headers);
@@ -608,6 +638,12 @@ pub async fn delete_identity_credentials(
 
     headers.append("Accept", "application/json")?;
 
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
+
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Delete);
     req_builder.with_headers(headers);
@@ -667,6 +703,12 @@ pub async fn delete_identity_sessions(
 
     headers.append("Accept", "application/json")?;
 
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
+
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Delete);
     req_builder.with_headers(headers);
@@ -723,6 +765,12 @@ pub async fn disable_session(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Delete);
@@ -782,6 +830,12 @@ pub async fn extend_session(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Patch);
@@ -875,6 +929,12 @@ pub async fn get_identity(
 
     headers.append("Accept", "application/json")?;
 
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
+
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
     req_builder.with_headers(headers);
@@ -967,6 +1027,12 @@ pub async fn get_identity_by_external_id(
 
     headers.append("Accept", "application/json")?;
 
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
+
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
     req_builder.with_headers(headers);
@@ -1032,6 +1098,12 @@ pub async fn get_identity_schema(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1122,6 +1194,12 @@ pub async fn get_session(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1270,6 +1348,12 @@ pub async fn list_identities(
 
     headers.append("Accept", "application/json")?;
 
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
+
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
     req_builder.with_headers(headers);
@@ -1359,6 +1443,12 @@ pub async fn list_identity_schemas(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
 
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
@@ -1470,6 +1560,12 @@ pub async fn list_identity_sessions(
 
     headers.append("Accept", "application/json")?;
 
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
+
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
     req_builder.with_headers(headers);
@@ -1574,6 +1670,12 @@ pub async fn list_sessions(
 
     headers.append("Accept", "application/json")?;
 
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
+
     let mut req_builder = RequestInit::new();
     req_builder.with_method(Method::Get);
     req_builder.with_headers(headers);
@@ -1648,6 +1750,12 @@ pub async fn patch_identity(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();
@@ -1725,6 +1833,12 @@ pub async fn update_identity(
     }
 
     headers.append("Accept", "application/json")?;
+
+    if let Some(ref cors) = configuration.cors {
+        for (k, v) in cors.entries() {
+            headers.append(&k, &v)?;
+        }
+    }
     headers.append("Content-Type", "application/json")?;
 
     let mut req_builder = RequestInit::new();

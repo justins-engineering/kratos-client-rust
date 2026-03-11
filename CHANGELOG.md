@@ -13,8 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `web_sys::window().unwrap()` to `web_sys::window().expect("Failed to get Window object")`
   - `req.dyn_into().unwrap()` to `req.dyn_into().expect("Failed to dynamically cast JsFuture into Response")`
 
+### Added
 - Add worker_apis for compatibility with workers-rs
-- Added worker::Cors field to Configuration struct in worker_apis
+- Added worker::Headers field to Configuration struct in worker_apis
 
 ## [0.2.0] - 2026-02-07
 
