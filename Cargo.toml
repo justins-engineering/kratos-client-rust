@@ -17,8 +17,14 @@ categories = ["wasm", "web-programming"]
 documentation = "https://docs.rs/ory-kratos-client-wasm/"
 readme = "README.md"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [package.metadata.docs.rs]
 default-target = "wasm32-unknown-unknown"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["--enable-bulk-memory"]
 
 [dependencies]
 serde = { version = "^1.0", features = ["derive"] }
@@ -41,6 +47,9 @@ web-sys = { version = "0.3", features = [
   "RequestCredentials",
 ], optional = true }
 
+# "worker" feature deps
+worker = { version = "0.7", optional = true }
+
 # "reqwest" feature deps
 reqwest = { version = "^0.13", features = [
   "json",
@@ -49,11 +58,12 @@ reqwest = { version = "^0.13", features = [
 ], optional = true }
 
 [features]
-default = ["wasm"]
+default = ["worker"]
 wasm = [
   "dep:gloo-utils",
   "dep:wasm-bindgen",
   "dep:wasm-bindgen-futures",
   "dep:web-sys",
 ]
+worker = ["dep:gloo-utils", "dep:wasm-bindgen", "dep:worker"]
 reqwest = ["dep:reqwest"]
