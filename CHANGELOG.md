@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-03-12
+
 ### Changed
 
 - wasm_apis
   - `web_sys::window().unwrap()` to `web_sys::window().expect("Failed to get Window object")`
   - `req.dyn_into().unwrap()` to `req.dyn_into().expect("Failed to dynamically cast JsFuture into Response")`
+
+### Added
 
 - Add worker_apis for compatibility with workers-rs
 
@@ -109,7 +113,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Cargo.toml info and edition
 
 
-[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.0...master
+[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.1...master
+[0.2.1]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.6...v0.2.0
 [0.1.6]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.1.4...v0.1.5
