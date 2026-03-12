@@ -1,6 +1,6 @@
 [package]
 name = "ory-kratos-client-wasm"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["JES <justin@jes.contact>", "office@ory.sh"]
 description = "A fork of ory-kratos-client that uses the browser's Fetch API instead of reqwest when building for wasm."
 license = "Apache-2.0"
@@ -58,7 +58,7 @@ reqwest = { version = "^0.13", features = [
 ], optional = true }
 
 [features]
-default = ["worker"]
+default = ["wasm"]
 wasm = [
   "dep:gloo-utils",
   "dep:wasm-bindgen",
