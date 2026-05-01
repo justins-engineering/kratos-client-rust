@@ -1,6 +1,6 @@
 [package]
 name = "ory-kratos-client-wasm"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["JES <justin@jes.contact>", "office@ory.sh"]
 description = "A fork of ory-kratos-client that uses the browser's Fetch API instead of reqwest when building for wasm."
 license = "Apache-2.0"
@@ -27,14 +27,14 @@ default-target = "wasm32-unknown-unknown"
 wasm-opt = ["--enable-bulk-memory"]
 
 [dependencies]
-serde = { version = "^1.0", features = ["derive"] }
-serde_with = { version = "^3.16", default-features = false, features = ["std"] }
-serde_json = "^1.0"
-serde_repr = "^0.1"
-url = "^2.5"
+serde = { version = "1", features = ["derive"] }
+serde_with = { version = "3", default-features = false, features = ["std"] }
+serde_json = "1"
+serde_repr = "0.1"
+url = "2.5"
 
 # "wasm" feature deps
-gloo-utils = { version = "0.2", features = ["serde"], optional = true }
+gloo-utils = { version = "0.3", features = ["serde"], optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 wasm-bindgen-futures = { version = "0.4", optional = true }
 web-sys = { version = "0.3", features = [
@@ -48,10 +48,10 @@ web-sys = { version = "0.3", features = [
 ], optional = true }
 
 # "worker" feature deps
-worker = { version = "0.7", optional = true }
+worker = { version = "0.8", optional = true }
 
 # "reqwest" feature deps
-reqwest = { version = "^0.13", features = [
+reqwest = { version = "0.13", features = [
   "json",
   "multipart",
   "query",
