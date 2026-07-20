@@ -39,15 +39,14 @@ pub async fn get_courier_message(
     configuration: &configuration::Configuration,
     id: &str,
 ) -> Result<models::Message, Error<GetCourierMessageError>> {
-    // add a prefix to parameters to efficiently prevent name collisions
-    let p_id = crate::wasm_apis::urlencode(id);
+    let id = crate::wasm_apis::urlencode(id);
 
-    let uri_str_len = "/admin/courier/messages/".len() + configuration.base_path.len() + p_id.len();
+    let uri_str_len = "/admin/courier/messages/".len() + configuration.base_path.len() + id.len();
 
     let mut uri_str = String::with_capacity(uri_str_len);
     uri_str.push_str(&configuration.base_path);
     uri_str.push_str("/admin/courier/messages/");
-    uri_str.push_str(&p_id);
+    uri_str.push_str(&id);
 
     let req_builder = RequestInit::new();
     req_builder.set_method("GET");

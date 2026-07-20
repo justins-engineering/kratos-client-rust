@@ -57,7 +57,12 @@ pub async fn get_version(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -120,7 +125,12 @@ pub async fn is_alive(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -183,7 +193,12 @@ pub async fn is_ready(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req

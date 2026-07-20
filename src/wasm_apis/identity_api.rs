@@ -236,7 +236,12 @@ pub async fn batch_patch_identities(
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -320,7 +325,12 @@ pub async fn create_identity(
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -406,7 +416,12 @@ pub async fn create_recovery_code_for_identity(
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -499,7 +514,12 @@ pub async fn create_recovery_link_for_identity(
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -581,7 +601,12 @@ pub async fn delete_identity(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -659,7 +684,12 @@ pub async fn delete_identity_credentials(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -725,7 +755,12 @@ pub async fn delete_identity_sessions(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -789,7 +824,12 @@ pub async fn disable_session(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -855,7 +895,12 @@ pub async fn extend_session(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -954,7 +999,12 @@ pub async fn get_identity(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1053,7 +1103,12 @@ pub async fn get_identity_by_external_id(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1126,7 +1181,12 @@ pub async fn get_identity_schema(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1223,7 +1283,12 @@ pub async fn get_session(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1377,7 +1442,12 @@ pub async fn list_identities(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1474,7 +1544,12 @@ pub async fn list_identity_schemas(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1591,7 +1666,12 @@ pub async fn list_identity_sessions(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1702,7 +1782,12 @@ pub async fn list_sessions(
 
     req_builder.headers().set("Accept", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1789,7 +1874,12 @@ pub async fn patch_identity(
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
@@ -1876,7 +1966,12 @@ pub async fn update_identity(
         .headers()
         .set("Content-Type", "application/json")?;
 
-    let req = JsFuture::from(web_sys::window().unwrap().fetch_with_request(&req_builder)).await?;
+    let req = JsFuture::from(
+        web_sys::window()
+            .expect("Failed to get Window object")
+            .fetch_with_request(&req_builder),
+    )
+    .await?;
 
     assert!(req.is_instance_of::<Response>());
     let resp: Response = req
