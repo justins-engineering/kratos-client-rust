@@ -39,6 +39,7 @@
 //! error enums + functions) to the two output paths.
 
 use quote::{ToTokens, quote};
+use std::collections::HashSet;
 use syn::{Expr, ExprIf, ExprLet, FnArg, Item, ItemFn, Lit, Pat, ReturnType, Stmt, Type};
 
 struct PathParam {
@@ -150,6 +151,11 @@ fn extract_fn(f: &ItemFn) -> ExtractedFn {
         }
     }
 
+    // Bare (never `r#`-prefixed) signature parameter names -- the ground
+    // truth `resolve_param_name` disambiguates the `p_`-prefixed reqwest
+    // local bindings against (see its doc comment for why this exists).
+    let sig_params: HashSet<String> = params.iter().map(|(ident, _)| ident.to_string().trim_start_matches("r#").to_string()).collect();
+
     // Return type: Result<T, Error<E>>.
     let ReturnType::Type(_, ret_ty) = &f.sig.output else {
         panic!("function {name}: no return type");
@@ -194,7 +200,7 @@ fn extract_fn(f: &ItemFn) -> ExtractedFn {
                 if let Some(init) = &local.init {
                     if let Expr::Macro(m) = &*init.expr {
                         if m.mac.path.is_ident("format") {
-                            let (template, params) = parse_format_macro(&m.mac, &name);
+                            let (template, params) = parse_format_macro(&m.mac, &name, &sig_params);
                             path_template = template;
                             path_params = params;
                         }
@@ -213,9 +219,9 @@ fn extract_fn(f: &ItemFn) -> ExtractedFn {
             Stmt::Expr(Expr::If(if_expr), _) => {
                 if is_api_key_check(if_expr) {
                     has_api_key_check = true;
-                } else if let Some(qp) = extract_query_param(if_expr) {
+                } else if let Some(qp) = extract_query_param(if_expr, &sig_params) {
                     query_params.push(qp);
-                } else if let Some(hp) = extract_header_param(if_expr) {
+                } else if let Some(hp) = extract_header_param(if_expr, &sig_params) {
                     header_params.push(hp);
                 }
             }
@@ -225,9 +231,9 @@ fn extract_fn(f: &ItemFn) -> ExtractedFn {
             Stmt::Expr(Expr::Assign(assign), _) => {
                 if let Expr::MethodCall(mc) = &*assign.right {
                     if mc.method == "json" {
-                        json_body = Some(extract_json_body_ident(mc, &name));
+                        json_body = Some(extract_json_body_ident(mc, &name, &sig_params));
                     } else if mc.method == "query" {
-                        if let Some(mut qp) = extract_unconditional_query_param(mc) {
+                        if let Some(mut qp) = extract_unconditional_query_param(mc, &sig_params) {
                             qp.optional = false;
                             query_params.push(qp);
                         }
@@ -314,7 +320,7 @@ fn find_method_call(expr: &Expr) -> Option<&'static str> {
 /// as emitted by the reqwest apis/ tree for URI building. Returns the path
 /// template string (with `{name}` placeholders still in it) and the ordered
 /// list of named path params.
-fn parse_format_macro(mac: &syn::Macro, fn_name: &syn::Ident) -> (String, Vec<PathParam>) {
+fn parse_format_macro(mac: &syn::Macro, fn_name: &syn::Ident, sig_params: &HashSet<String>) -> (String, Vec<PathParam>) {
     // format!'s named-arg syntax (`name = expr`) is a macro-level construct,
     // not ordinary expression grammar -- `name` can be a bare keyword like
     // `type` (openapi-generator always uses the unprefixed keyword form
@@ -372,7 +378,7 @@ fn parse_format_macro(mac: &syn::Macro, fn_name: &syn::Ident) -> (String, Vec<Pa
                 panic!("function {fn_name}: urlencode(..) call has no identifier argument");
             };
             let raw_ident = inner_arg.path.segments.last().unwrap().ident.clone();
-            let stripped = raw_ident.to_string().strip_prefix("p_").unwrap_or(&raw_ident.to_string()).to_string();
+            let stripped = resolve_param_name(&raw_ident.to_string(), sig_params);
             // `name` (the format! binding) is already the unprefixed keyword
             // form when it's a keyword (see above) -- reuse that directly to
             // decide whether the real Rust identifier needs `r#`.
@@ -395,6 +401,42 @@ fn is_rust_keyword(s: &str) -> bool {
     )
 }
 
+/// Recovers the clean parameter name from an openapi-generator local binding
+/// identifier (e.g. `p_refresh`, or `p_query_refresh` on generator configs
+/// that classify by parameter location) by disambiguating against the
+/// function's real signature parameter set (task #30).
+///
+/// Some openapi-generator versions/configs emit a location-classified prefix
+/// instead of a bare `p_` -- `p_query_refresh`, `p_path_id`, `p_header_x`,
+/// `p_cookie_x`, `p_form_x`, `p_body_x` -- and a blind `strip_prefix("p_")`
+/// then yields `query_refresh` instead of `refresh`, which matches no
+/// signature parameter. But the string alone can't disambiguate: an API
+/// parameter genuinely named `query_refresh` also produces the local
+/// `p_query_refresh`. The function's own signature is the ground truth, so
+/// the bare `p_`-stripped name is tried first and wins whenever it's a real
+/// signature param (this covers both the normal case AND the genuinely-named
+/// `query_refresh` case) -- only when that fails is a location-classification
+/// segment peeled off and retried.
+fn resolve_param_name(raw: &str, sig_params: &HashSet<String>) -> String {
+    // Normalize away a raw-identifier marker if present (r#type -> type).
+    let raw = raw.strip_prefix("r#").unwrap_or(raw);
+    let Some(after_p) = raw.strip_prefix("p_") else { return raw.to_string() };
+    if sig_params.contains(after_p) {
+        return after_p.to_string();
+    }
+    for loc in ["query_", "path_", "header_", "cookie_", "form_", "body_"] {
+        if let Some(rest) = after_p.strip_prefix(loc) {
+            if sig_params.contains(rest) {
+                return rest.to_string();
+            }
+        }
+    }
+    // Fallback: preserve historical behavior (bare p_ strip) so an
+    // unrecognized shape still degrades the same way it always has, rather
+    // than being silently swallowed.
+    after_p.to_string()
+}
+
 fn is_api_key_check(if_expr: &ExprIf) -> bool {
     let Expr::Let(ExprLet { expr, .. }) = &*if_expr.cond else { return false };
     let Expr::Field(field) = &**expr else { return false };
@@ -410,8 +452,8 @@ fn is_api_key_check(if_expr: &ExprIf) -> bool {
 /// stock reqwest template that always takes the "multi" arm; see the
 /// courier_api.rs `match "multi"` note in the design doc). Returns the query
 /// key + the source identifier (`p_x`, normalized back to `x`).
-fn extract_query_param(if_expr: &ExprIf) -> Option<QueryParam> {
-    let source_ident = optional_if_let_source(if_expr)?;
+fn extract_query_param(if_expr: &ExprIf, sig_params: &HashSet<String>) -> Option<QueryParam> {
+    let source_ident = optional_if_let_source(if_expr, sig_params)?;
 
     for stmt in &if_expr.then_branch.stmts {
         let Stmt::Expr(Expr::Assign(assign), _) = stmt else { continue };
@@ -440,8 +482,8 @@ fn extract_query_param(if_expr: &ExprIf) -> Option<QueryParam> {
 /// like Cookie/X-Session-Token -- NOT the fixed user_agent/api_key blocks,
 /// which are handled separately). Distinguished from `extract_query_param`
 /// purely by which builder method the then-branch calls.
-fn extract_header_param(if_expr: &ExprIf) -> Option<HeaderParam> {
-    let source_ident = optional_if_let_source(if_expr)?;
+fn extract_header_param(if_expr: &ExprIf, sig_params: &HashSet<String>) -> Option<HeaderParam> {
+    let source_ident = optional_if_let_source(if_expr, sig_params)?;
 
     for stmt in &if_expr.then_branch.stmts {
         let Stmt::Expr(Expr::Assign(assign), _) = stmt else { continue };
@@ -459,7 +501,7 @@ fn extract_header_param(if_expr: &ExprIf) -> Option<HeaderParam> {
 /// Shared by extract_query_param/extract_header_param: pulls the `p_x`
 /// source identifier out of `if let Some([ref] param_value) = p_x { .. }`,
 /// normalized back to the real parameter name `x`.
-fn optional_if_let_source(if_expr: &ExprIf) -> Option<syn::Ident> {
+fn optional_if_let_source(if_expr: &ExprIf, sig_params: &HashSet<String>) -> Option<syn::Ident> {
     let Expr::Let(ExprLet { pat, expr, .. }) = &*if_expr.cond else { return None };
     let Pat::TupleStruct(ts) = &**pat else { return None };
     if !ts.path.is_ident("Some") {
@@ -467,10 +509,8 @@ fn optional_if_let_source(if_expr: &ExprIf) -> Option<syn::Ident> {
     }
     let Expr::Path(source_path) = &**expr else { return None };
     let raw_ident = source_path.path.segments.last()?.ident.clone();
-    Some(match raw_ident.to_string().strip_prefix("p_") {
-        Some(stripped) => syn::Ident::new(stripped, raw_ident.span()),
-        None => raw_ident,
-    })
+    let resolved = resolve_param_name(&raw_ident.to_string(), sig_params);
+    Some(syn::Ident::new(&resolved, raw_ident.span()))
 }
 
 /// Matches the unconditional (required-parameter) query push:
@@ -482,7 +522,7 @@ fn optional_if_let_source(if_expr: &ExprIf) -> Option<syn::Ident> {
 /// than token-scanning, since a generic "find any identifier" scan would
 /// ambiguously also match the `to_string`/`to_owned` method names in the
 /// same expression.
-fn extract_unconditional_query_param(mc: &syn::ExprMethodCall) -> Option<QueryParam> {
+fn extract_unconditional_query_param(mc: &syn::ExprMethodCall, sig_params: &HashSet<String>) -> Option<QueryParam> {
     let key = find_first_str_lit(&mc.args)?;
 
     let Some(Expr::Reference(array_ref)) = mc.args.first() else { return None };
@@ -492,16 +532,14 @@ fn extract_unconditional_query_param(mc: &syn::ExprMethodCall) -> Option<QueryPa
     let Expr::MethodCall(to_string_call) = &*value_ref.expr else { return None };
     let Expr::Path(p) = &*to_string_call.receiver else { return None };
     let raw_ident = p.path.segments.last()?.ident.clone();
-    let source_ident = match raw_ident.to_string().strip_prefix("p_") {
-        Some(stripped) => syn::Ident::new(stripped, raw_ident.span()),
-        None => raw_ident,
-    };
+    let resolved = resolve_param_name(&raw_ident.to_string(), sig_params);
+    let source_ident = syn::Ident::new(&resolved, raw_ident.span());
     Some(QueryParam { key, source_ident, optional: false, is_multi: false })
 }
 
 /// `req_builder = req_builder.json(&p_x);` -- extract `p_x`, normalized to
 /// the real param name `x`.
-fn extract_json_body_ident(mc: &syn::ExprMethodCall, fn_name: &syn::Ident) -> syn::Ident {
+fn extract_json_body_ident(mc: &syn::ExprMethodCall, fn_name: &syn::Ident, sig_params: &HashSet<String>) -> syn::Ident {
     let Some(Expr::Reference(r)) = mc.args.first() else {
         panic!("function {fn_name}: .json(..) call's argument isn't a reference expression");
     };
@@ -509,10 +547,8 @@ fn extract_json_body_ident(mc: &syn::ExprMethodCall, fn_name: &syn::Ident) -> sy
         panic!("function {fn_name}: .json(&..) argument isn't a bare identifier");
     };
     let raw_ident = p.path.segments.last().unwrap().ident.clone();
-    match raw_ident.to_string().strip_prefix("p_") {
-        Some(stripped) => syn::Ident::new(stripped, raw_ident.span()),
-        None => raw_ident,
-    }
+    let resolved = resolve_param_name(&raw_ident.to_string(), sig_params);
+    syn::Ident::new(&resolved, raw_ident.span())
 }
 
 /// args is `&[("key", &param_value.to_string())]` -- the string literal is
@@ -877,4 +913,60 @@ fn emit_fn(f: &ExtractedFn, target: &Target) -> String {
     };
 
     format!("{doc_comment}\n{tokens}")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::resolve_param_name;
+    use std::collections::HashSet;
+
+    fn sig(names: &[&str]) -> HashSet<String> {
+        names.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn strips_bare_p_prefix() {
+        assert_eq!(resolve_param_name("p_refresh", &sig(&["refresh"])), "refresh");
+    }
+
+    #[test]
+    fn strips_location_classified_prefix() {
+        assert_eq!(resolve_param_name("p_query_refresh", &sig(&["refresh"])), "refresh");
+    }
+
+    #[test]
+    fn strips_path_location_prefix() {
+        assert_eq!(resolve_param_name("p_path_id", &sig(&["id"])), "id");
+    }
+
+    #[test]
+    fn genuine_location_shaped_param_name_wins_over_peeling() {
+        // A real signature param literally named `query_refresh` also
+        // produces the local `p_query_refresh` -- the bare p_-strip must be
+        // tried first and win, or this would get corrupted into `refresh`.
+        assert_eq!(resolve_param_name("p_query_refresh", &sig(&["query_refresh"])), "query_refresh");
+    }
+
+    #[test]
+    fn no_p_prefix_passes_through() {
+        assert_eq!(resolve_param_name("refresh", &sig(&["refresh"])), "refresh");
+    }
+
+    #[test]
+    fn unknown_shape_falls_back_to_bare_p_strip() {
+        assert_eq!(resolve_param_name("p_unknown", &sig(&["refresh"])), "unknown");
+    }
+
+    #[test]
+    fn strips_raw_identifier_marker() {
+        assert_eq!(resolve_param_name("r#p_type", &sig(&["type"])), "type");
+    }
+
+    #[test]
+    fn other_location_prefixes() {
+        assert_eq!(resolve_param_name("p_header_x_session_token", &sig(&["x_session_token"])), "x_session_token");
+        assert_eq!(resolve_param_name("p_cookie_x", &sig(&["x"])), "x");
+        assert_eq!(resolve_param_name("p_form_x", &sig(&["x"])), "x");
+        assert_eq!(resolve_param_name("p_body_x", &sig(&["x"])), "x");
+    }
 }
