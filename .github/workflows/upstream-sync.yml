@@ -1,0 +1,221 @@
+name: Upstream sync
+
+# The task #23 payoff: turn "upstream regenerated src/apis, now go hand-port
+# wasm_apis/worker_apis" into a scheduled, mostly-automated PR instead of a
+# manual chore. See tools/regen-fetch-apis/src/main.rs and the task #23
+# design doc for the full architecture this assumes: src/apis (the
+# openapi-generator-tech reqwest tree) is upstream's content, synced in
+# wholesale and never hand-edited; wasm_apis/worker_apis are regenerated
+# from it by the codemod, not hand-ported.
+
+on:
+  schedule:
+    # Daily. Upstream (ory/kratos-client-rust) regenerates on Kratos
+    # releases, which aren't frequent enough to need anything tighter, and
+    # this is a no-op most days (see the "nothing to sync" exit below).
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  CARGO_TERM_COLOR: always
+  UPSTREAM_REPO: https://github.com/ory/kratos-client-rust.git
+
+jobs:
+  sync:
+    name: sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream "$UPSTREAM_REPO"
+          git fetch upstream master
+
+      # merge-base(HEAD, upstream/master) is the last point our history and
+      # upstream's actually shared -- this fork's whole history is built on
+      # periodically merging upstream's autogen commits in wholesale (see
+      # the task #23 design doc's `upstream` remote finding), so this
+      # naturally identifies "what we last synced from," no separate
+      # bookkeeping file needed.
+      - name: Determine sync base and check for new src/apis changes
+        id: check
+        run: |
+          base=$(git merge-base HEAD upstream/master)
+          upstream_head=$(git rev-parse upstream/master)
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "upstream_head=$upstream_head" >> "$GITHUB_OUTPUT"
+
+          if [ "$base" = "$upstream_head" ]; then
+            echo "up to date with upstream/master, nothing to sync"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Only src/apis changes matter -- that's the only tree the codemod
+          # reads, and upstream's repo-template/chore commits (which don't
+          # touch it) shouldn't trigger a sync.
+          if git diff --quiet "$base" "$upstream_head" -- src/apis; then
+            echo "upstream has new commits, but none touch src/apis -- nothing to sync"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pull upstream's src/apis, src/models, docs, .openapi-generator
+        if: steps.check.outputs.has_changes == 'true'
+        run: |
+          git checkout upstream/master -- src/apis src/models docs .openapi-generator
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          branch="upstream-sync/$(date -u +%Y-%m-%d)"
+          echo "branch=$branch" >> "$GITHUB_ENV"
+          git checkout -b "$branch"
+          git add src/apis src/models docs .openapi-generator
+          git commit -m "$(cat <<EOF
+          sync: pull upstream src/apis changes (${{ steps.check.outputs.upstream_head }})
+
+          Pulled src/apis, src/models, docs, and .openapi-generator from
+          upstream ory/kratos-client-rust@${{ steps.check.outputs.upstream_head }}
+          via a targeted path checkout (not a full merge -- this fork has
+          diverged on Cargo.toml/CHANGELOG.md/wasm_apis/worker_apis/tools
+          in ways a full merge would conflict on for no reason, since only
+          these directories are genuinely upstream's content; see the
+          task #23 design doc).
+
+          Next commit (if this workflow gets that far): regenerate
+          wasm_apis/worker_apis from this via tools/regen-fetch-apis.
+          EOF
+          )"
+
+      - name: Regenerate wasm_apis/worker_apis
+        if: steps.check.outputs.has_changes == 'true'
+        id: regen
+        run: |
+          set +e
+          for f in courier metadata identity frontend; do
+            cargo run --manifest-path tools/regen-fetch-apis/Cargo.toml --target x86_64-unknown-linux-gnu -- \
+              "src/apis/${f}_api.rs" "src/wasm_apis/${f}_api.rs" "src/worker_apis/${f}_api.rs" \
+              > /tmp/regen-output.log 2>&1
+            status=$?
+            if [ $status -ne 0 ]; then
+              echo "codemod failed on ${f}_api.rs"
+              cat /tmp/regen-output.log
+              {
+                echo "panic_log<<EOF_PANIC"
+                echo "Codemod failed while regenerating \`${f}_api.rs\`:"
+                echo '```'
+                cat /tmp/regen-output.log
+                echo '```'
+                echo "EOF_PANIC"
+              } >> "$GITHUB_OUTPUT"
+              echo "failed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+          rustfmt --edition 2024 src/wasm_apis/*.rs src/worker_apis/*.rs
+          echo "failed=false" >> "$GITHUB_OUTPUT"
+
+      # The fail-loud case (task #23's whole point, and the exact scenario
+      # #30 already anticipates: openapi-generator changing its p_-prefix
+      # convention will trip the codemod's per-parameter "every param must
+      # be accounted for" guard). Never silently do nothing, never open a
+      # PR with half-regenerated or wrong code -- file an issue naming the
+      # panic, and fail the job so it's visible in the Actions tab too.
+      - name: File an issue if the codemod failed
+        if: steps.check.outputs.has_changes == 'true' && steps.regen.outputs.failed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Upstream sync: regen-fetch-apis failed on upstream ${{ steps.check.outputs.upstream_head }}" \
+            --label "upstream-sync" \
+            --body "$(cat <<EOF
+          Upstream ory/kratos-client-rust has new src/apis changes
+          (up to \`${{ steps.check.outputs.upstream_head }}\`), but
+          \`tools/regen-fetch-apis\` failed to regenerate \`wasm_apis\`/
+          \`worker_apis\` from them -- this is the codemod's fail-loud
+          guard catching a statement or parameter shape it doesn't
+          recognize (see the panic below), most likely a real change on
+          upstream's side (spec change, or an openapi-generator template
+          convention change like the \`p_\` -> \`p_query_\`/\`p_header_\`
+          prefix drift already tracked for the *next* real change -- see
+          the CHANGELOG's 2.4.0 entry and the task #23/#24 history).
+
+          The codemod needs a small update to handle whatever shape this
+          is before this sync can proceed automatically. No PR was opened
+          and no files were changed on \`master\` -- this issue and the
+          failed workflow run are the only trace.
+
+          ${{ steps.regen.outputs.panic_log }}
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          EOF
+          )"
+          exit 1
+
+      - name: Build sanity check (wasm + worker + reqwest, compile only)
+        if: steps.check.outputs.has_changes == 'true' && steps.regen.outputs.failed == 'false'
+        run: |
+          cargo build --target wasm32-unknown-unknown
+          cargo build --target wasm32-unknown-unknown --no-default-features --features worker
+          cargo build --no-default-features --features reqwest --target x86_64-unknown-linux-gnu
+
+      # Full Kratos-backed test coverage (the reqwest integration suite +
+      # wasm/worker smoke tests) deliberately isn't duplicated here -- once
+      # this PR is opened, ci.yml's `pull_request:` trigger runs the whole
+      # suite against it automatically. This job only needs to prove the
+      # regenerated code compiles before asking for review.
+      - name: Commit regenerated trees and open a PR
+        if: steps.check.outputs.has_changes == 'true' && steps.regen.outputs.failed == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add src/wasm_apis src/worker_apis
+          git commit -m "$(cat <<EOF
+          wasm_apis/worker_apis: regenerate from synced upstream src/apis
+
+          Ran tools/regen-fetch-apis across all four API files against the
+          src/apis pulled from upstream in the prior commit. Compiles clean
+          for both the wasm and worker features (checked in this workflow
+          run); the full reqwest-integration + smoke test suite runs
+          automatically via ci.yml once this PR is opened.
+          EOF
+          )"
+          git push origin "$branch"
+          gh pr create \
+            --title "Upstream sync: ${{ steps.check.outputs.upstream_head }}" \
+            --label "upstream-sync" \
+            --body "$(cat <<EOF
+          Automated sync from ory/kratos-client-rust@${{ steps.check.outputs.upstream_head }}
+          (previous base: ${{ steps.check.outputs.base }}).
+
+          - Pulled \`src/apis\`, \`src/models\`, \`docs\`, \`.openapi-generator\` from
+            upstream's tip via targeted path checkout (not a full merge --
+            see the first commit's message for why).
+          - Regenerated \`wasm_apis\`/\`worker_apis\` via \`tools/regen-fetch-apis\`.
+          - wasm + worker + reqwest features all compile clean (checked in
+            this workflow run).
+          - The full reqwest-integration + wasm/worker smoke test suite
+            will run automatically against this PR via \`ci.yml\`.
+
+          **Never auto-merged** -- this needs human review before landing,
+          same as any change to a published crate. If the diff looks like
+          more than the expected upstream-relabel + regenerated-Fetch-trees
+          shape, something's off; compare against the task #23 commits
+          (e1da07f / 22a01dc / 2594693) for what a clean regen diff looks
+          like.
+          EOF
+          )"
