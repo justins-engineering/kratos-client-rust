@@ -152,7 +152,7 @@ jobs:
           upstream's side (spec change, or an openapi-generator template
           convention change like the \`p_\` -> \`p_query_\`/\`p_header_\`
           prefix drift already tracked for the *next* real change -- see
-          the CHANGELOG's 2.4.0 entry and the task #23/#24 history).
+          the CHANGELOG's 0.2.4 entry and the task #23/#24 history).
 
           The codemod needs a small update to handle whatever shape this
           is before this sync can proceed automatically. No PR was opened
