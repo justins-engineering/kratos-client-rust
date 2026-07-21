@@ -60,6 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cannot succeed over the `reqwest` feature against real Kratos), which is
   upstream's tree and not something this fork hand-patches. Noted here so
   it's easy to find later, not because this release fixes it.
+- Updated the tracked API version reference to `v26.2.0` (README, CI Kratos
+  image `oryd/kratos:v26.2`, `.ci/kratos/kratos.yml`). Upstream `v26.2.0` is
+  a pure version relabel of the previously-tracked `v25.4.0` -- the OpenAPI
+  surface is unchanged, so no generated code differs; only the version label
+  moves.
 
 ## [0.2.3] - 2026-05-01
 

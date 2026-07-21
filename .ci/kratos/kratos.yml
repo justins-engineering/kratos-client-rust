@@ -9,7 +9,7 @@
 # `dsn` here is a fallback; the CI workflow overrides it via the `DSN` env
 # var pointing at the job's postgres service container, same pattern
 # PidgeIoT's own docker-compose.yml uses.
-version: v25.4.0
+version: v26.2.0
 
 dsn: postgres://kratos:secret@127.0.0.1:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
 

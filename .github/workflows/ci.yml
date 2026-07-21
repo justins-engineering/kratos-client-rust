@@ -89,14 +89,14 @@ jobs:
         run: |
           docker run --rm --network host \
             -v "${{ github.workspace }}/.ci/kratos:/opt/kratos" \
-            oryd/kratos:v25.4 \
+            oryd/kratos:v26.2 \
             -c /opt/kratos/kratos.yml migrate sql -e --yes
 
       - name: Kratos -- serve (detached)
         run: |
           docker run -d --network host --name kratos-ci \
             -v "${{ github.workspace }}/.ci/kratos:/opt/kratos" \
-            oryd/kratos:v25.4 \
+            oryd/kratos:v26.2 \
             serve -c /opt/kratos/kratos.yml --dev
 
       - name: Kratos -- wait for ready
@@ -144,11 +144,18 @@ jobs:
       # keep in sync with the preinstalled Chrome version -- more portable
       # than hardcoding a path like /usr/bin/chromedriver, which risks
       # drifting from whatever Chrome/chromedriver pairing the image ships.
+      # It MUST be dereferenced in the shell (`$CHROMEWEBDRIVER`), not via a
+      # `${{ env.CHROMEWEBDRIVER }}` expression in an `env:` block: the `env`
+      # expression context only sees workflow-defined vars, not the runner
+      # image's OS-level env, so the expression form silently expands to ""
+      # and leaves CHROMEDRIVER=/chromedriver (a nonexistent path -> "failed
+      # to spawn chromedriver").
       - name: wasm feature smoke test
         env:
-          CHROMEDRIVER: ${{ env.CHROMEWEBDRIVER }}/chromedriver
           CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER: wasm-bindgen-test-runner
-        run: cargo test --target wasm32-unknown-unknown --test wasm_smoke
+        run: |
+          export CHROMEDRIVER="$CHROMEWEBDRIVER/chromedriver"
+          cargo test --target wasm32-unknown-unknown --test wasm_smoke
 
       # worker feature smoke test: unlike the wasm one, this one is NOT
       # CORS-blocked (CORS is a browser policy; the Workers runtime's own

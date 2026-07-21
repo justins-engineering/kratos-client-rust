@@ -5,7 +5,7 @@
 //!
 //! Scope notes (see the crate-level report for the reasoning):
 //! - Registration is intentionally NOT completion-tested here. This Kratos instance
-//!   uses v25.4's default two-step registration (profile traits, then password) —
+//!   uses v26.2's default two-step registration (profile traits, then password) —
 //!   see schemas/kratos/kratos.yml's comment on the `registration` flow in the
 //!   PidgeIoT repo and task #16 there. A native/JSON client has to submit `profile`
 //!   first, read the 400 response for the next step's nodes, then submit `password`

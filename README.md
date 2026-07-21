@@ -4,7 +4,7 @@ This is an unofficial Ory Kratos SDK for rust. Created to use the [Fetch API](ht
 
 For the official crate, use [ory-kratos-client](https://crates.io/crates/ory-kratos-client).
 
-API version: v25.4.0
+API version: v26.2.0
 
 ## Features
 
