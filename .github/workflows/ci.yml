@@ -1,0 +1,179 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Pure build matrix -- no Kratos needed, just confirms all three features
+  # actually compile for their real target. Mirrors the exact commands
+  # documented in tools/regen-fetch-apis and the crate-level report: the
+  # repo's own .cargo/config.toml pins the DEFAULT build target to
+  # wasm32-unknown-unknown, so the `reqwest` feature (native-only) needs an
+  # explicit --target override or it tries to build reqwest for wasm and
+  # fails outright.
+  build:
+    name: build (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: wasm (default feature)
+            args: --target wasm32-unknown-unknown
+          - name: worker feature
+            args: --target wasm32-unknown-unknown --no-default-features --features worker
+          - name: reqwest feature (native)
+            args: --no-default-features --features reqwest --target x86_64-unknown-linux-gnu
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build ${{ matrix.args }}
+
+  # Everything that needs a live Kratos: the reqwest-feature integration
+  # suite (the real coverage bar -- every public API function), plus the
+  # wasm/worker smoke tests proving those two Fetch implementations build a
+  # real request and parse a real response too (reqwest-only testing can't
+  # see wasm_apis/worker_apis's own code at all -- see the task #23 report
+  # for why that gap matters: it's what caught the is_alive->/health/ready
+  # bug that was silently identical in both hand-ported trees).
+  #
+  # Kratos itself can't run as a plain GitHub Actions `services:` container
+  # here: services always start with their image's default entrypoint, but
+  # Kratos needs `migrate sql` run against a fresh Postgres BEFORE `serve`
+  # will even start successfully. So only Postgres (a normal long-running
+  # server, works fine as a service with a health check) and MailSlurper
+  # (Kratos's courier/SMTP target for the verification-email tests) are
+  # `services:`; Kratos migrate+serve run as explicit steps via `docker run
+  # --network host`, matching PidgeIoT's own docker-compose.yml structure
+  # (postgres + kratos-migrate + kratos + mailslurper) as closely as
+  # GitHub Actions' service-container model allows.
+  test:
+    name: test (live Kratos)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: kratos
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: kratos
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mailslurper:
+        image: oryd/mailslurper:latest-smtps
+        ports:
+          - 4436:4436
+          - 4437:4437
+          - 1025:1025
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Kratos -- migrate
+        run: |
+          docker run --rm --network host \
+            -v "${{ github.workspace }}/.ci/kratos:/opt/kratos" \
+            oryd/kratos:v25.4 \
+            -c /opt/kratos/kratos.yml migrate sql -e --yes
+
+      - name: Kratos -- serve (detached)
+        run: |
+          docker run -d --network host --name kratos-ci \
+            -v "${{ github.workspace }}/.ci/kratos:/opt/kratos" \
+            oryd/kratos:v25.4 \
+            serve -c /opt/kratos/kratos.yml --dev
+
+      - name: Kratos -- wait for ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:4433/health/ready >/dev/null; then
+              echo "Kratos is ready"
+              exit 0
+            fi
+            echo "waiting for Kratos ($i/30)..."
+            sleep 2
+          done
+          echo "Kratos never became ready -- dumping logs"
+          docker logs kratos-ci
+          exit 1
+
+      - name: reqwest-feature integration tests
+        env:
+          KRATOS_PUBLIC_URL: http://127.0.0.1:4433
+          KRATOS_ADMIN_URL: http://127.0.0.1:4434
+        run: cargo test --no-default-features --features reqwest --target x86_64-unknown-linux-gnu
+
+      # wasm feature smoke test: proves the browser-Fetch code path builds a
+      # real request through an actual headless-Chrome instance. Chrome +
+      # chromedriver are preinstalled on GitHub's ubuntu-latest runners.
+      #
+      # This currently runs WITHOUT --ignored, so the single test in
+      # tests/wasm_smoke.rs stays #[ignore]'d and reports "1 ignored" rather
+      # than actually asserting against Kratos -- see that file's doc
+      # comment for the full reason (a confirmed, real CORS rejection: the
+      # wasm-bindgen-test-runner serves the test page from a browser-chosen
+      # ephemeral port with no way to pin it, and that origin can never be
+      # on any fixed CORS allow-list, including this CI-only Kratos
+      # config's). Running it anyway (rather than skipping the step
+      # entirely) still catches real regressions: that the wasm feature
+      # compiles as a test target at all, and that the harness itself
+      # (wasm-bindgen-test-runner + headless Chrome) launches successfully.
+      - name: Install wasm-bindgen-cli (pinned to the resolved wasm-bindgen version)
+        run: |
+          version=$(cargo metadata --format-version=1 2>/dev/null \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print(next(p['version'] for p in d['packages'] if p['name']=='wasm-bindgen'))")
+          cargo install wasm-bindgen-cli --version "$version" --locked
+
+      # $CHROMEWEBDRIVER is a directory GitHub's runner images set up and
+      # keep in sync with the preinstalled Chrome version -- more portable
+      # than hardcoding a path like /usr/bin/chromedriver, which risks
+      # drifting from whatever Chrome/chromedriver pairing the image ships.
+      - name: wasm feature smoke test
+        env:
+          CHROMEDRIVER: ${{ env.CHROMEWEBDRIVER }}/chromedriver
+          CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER: wasm-bindgen-test-runner
+        run: cargo test --target wasm32-unknown-unknown --test wasm_smoke
+
+      # worker feature smoke test: unlike the wasm one, this one is NOT
+      # CORS-blocked (CORS is a browser policy; the Workers runtime's own
+      # outbound fetch doesn't enforce it) and asserts a real pass/fail
+      # against live Kratos. See tests/worker_smoke/README.md for the
+      # manual-run version this mirrors.
+      - name: Install worker-build
+        run: cargo install worker-build
+
+      - name: worker feature smoke test
+        working-directory: tests/worker_smoke
+        run: |
+          worker-build --dev
+          npx --yes wrangler@4 dev --local --ip 127.0.0.1 --port 8899 &
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8899/ >/dev/null; then
+              break
+            fi
+            echo "waiting for the worker-smoke Worker ($i/30)..."
+            sleep 2
+          done
+          response=$(curl -sS http://127.0.0.1:8899/)
+          echo "$response"
+          echo "$response" | grep -q '^PASS:' || (echo "worker smoke test did not report PASS" && exit 1)
+
+      - name: Kratos -- dump logs on failure
+        if: failure()
+        run: docker logs kratos-ci || true

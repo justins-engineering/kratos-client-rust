@@ -1,0 +1,108 @@
+# Minimal Kratos config for CI only -- NOT the PidgeIoT deployment config
+# (that lives in the sibling `pidgeiot` repo's schemas/kratos/, and is the
+# one to look at for anything user-facing). This trims down to exactly what
+# tests/*.rs (the reqwest-feature integration suite) actually exercises:
+# the `password` and `code` self-service methods, and an identity schema
+# with just the `email` trait those tests set. See
+# .ci/kratos/identity.user.schema.json for the matching trimmed schema.
+#
+# `dsn` here is a fallback; the CI workflow overrides it via the `DSN` env
+# var pointing at the job's postgres service container, same pattern
+# PidgeIoT's own docker-compose.yml uses.
+version: v25.4.0
+
+dsn: postgres://kratos:secret@127.0.0.1:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
+
+session:
+  lifespan: 4h
+
+serve:
+  public:
+    base_url: http://127.0.0.1:4433/
+  admin:
+    base_url: http://127.0.0.1:4434/
+
+selfservice:
+  default_browser_return_url: http://127.0.0.1:9999/
+  allowed_return_urls:
+    - http://127.0.0.1:9999
+
+  methods:
+    password:
+      enabled: true
+    code:
+      enabled: true
+
+  flows:
+    error:
+      ui_url: http://127.0.0.1:9999/error
+
+    settings:
+      ui_url: http://127.0.0.1:9999/settings
+      privileged_session_max_age: 15m
+      required_aal: highest_available
+
+    recovery:
+      enabled: true
+      ui_url: http://127.0.0.1:9999/recovery
+      use: code
+
+    verification:
+      enabled: true
+      ui_url: http://127.0.0.1:9999/verification
+      use: code
+
+    logout:
+      after:
+        default_browser_return_url: http://127.0.0.1:9999/
+
+    login:
+      ui_url: http://127.0.0.1:9999/login
+      lifespan: 10m
+
+    registration:
+      lifespan: 10m
+      ui_url: http://127.0.0.1:9999/registration
+
+log:
+  level: info
+  format: text
+  leak_sensitive_values: true
+
+secrets:
+  default:
+    - 32-LONG-SECRET-NOT-SECURE-AT-ALL
+  cookie:
+    - 32-LONG-SECRET-NOT-SECURE-AT-ALL
+  cipher:
+    - 32-LONG-SECRET-NOT-SECURE-AT-ALL
+
+ciphers:
+  algorithm: xchacha20-poly1305
+
+# Fast, low-memory hashing for CI -- PidgeIoT's real config uses
+# 384MB/16-parallelism argon2 tuned for its own deployment; that's wasted
+# time on a CI runner and not what's being tested here.
+hashers:
+  algorithm: argon2
+  argon2:
+    memory: 64MB
+    iterations: 2
+    parallelism: 4
+    salt_length: 16
+    key_length: 32
+
+identity:
+  default_schema_id: user
+  schemas:
+    - id: user
+      url: file:///opt/kratos/identity.user.schema.json
+
+courier:
+  smtp:
+    connection_uri: smtps://test:test@127.0.0.1:1025/?skip_ssl_verify=true
+
+feature_flags:
+  use_continue_with_transitions: true
+
+sqa-opt-out: true
