@@ -7,15 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.4.0] - 2026-07-20
-
-First stable release. This jumps straight from 0.2.4 to 2.4.0 -- skipping
-1.x entirely -- as a deliberate stability declaration, not a breaking
-change: the API surface is unchanged from what was about to ship as
-0.2.4 (confirmed -- the codemod below regenerates `wasm_apis`/
-`worker_apis` from the existing `src/apis` signatures verbatim, never
-alters them). Everything in this entry was originally drafted as the
-0.2.4 changelog; only the version number and this framing note changed.
+## [0.2.4] - 2026-07-20
 
 ### Added
 
@@ -188,8 +180,8 @@ alters them). Everything in this entry was originally drafted as the
 - Updated Cargo.toml info and edition
 
 
-[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v2.4.0...master
-[2.4.0]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.3...v2.4.0
+[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.4...master
+[0.2.4]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.0...v0.2.1
