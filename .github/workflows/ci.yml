@@ -30,7 +30,7 @@ jobs:
           - name: reqwest feature (native)
             args: --no-default-features --features reqwest --target x86_64-unknown-linux-gnu
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
@@ -79,7 +79,7 @@ jobs:
           - 4437:4437
           - 1025:1025
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
