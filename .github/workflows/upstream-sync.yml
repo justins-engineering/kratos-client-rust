@@ -216,8 +216,16 @@ jobs:
           # overwrites the previous push (e.g. an orphaned branch from a run that
           # died before opening its PR), and the guard below reuses an already-open
           # PR (which the force-push has just updated) instead of erroring on a dup.
+          #
+          # Must check the PR's *state*, not just whether one exists for this head
+          # ref: `gh pr view <branch>` matches any PR for that branch regardless of
+          # state, including closed/merged ones from a previous day's PR that
+          # happened to reuse this same date-branch name (e.g. re-opened manually,
+          # then closed, then the branch recreated same-day) -- a plain existence
+          # check would find that closed PR and skip `gh pr create` forever, even
+          # though nothing is actually open to receive the force-pushed update.
           git push --force -u origin "$branch"
-          if gh pr view "$branch" --json number >/dev/null 2>&1; then
+          if [ "$(gh pr view "$branch" --json state --jq .state 2>/dev/null)" = "OPEN" ]; then
             echo "PR already open for $branch; force-pushed the updated regen to it, nothing more to do"
           else
           gh pr create \
