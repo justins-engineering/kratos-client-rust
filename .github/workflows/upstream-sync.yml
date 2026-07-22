@@ -74,6 +74,18 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Ensure the upstream-sync label exists
+        if: steps.check.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The PR + codemod-failure-issue steps below both tag with this label;
+          # --force makes it idempotent (create, or update if it already exists).
+          gh label create upstream-sync \
+            --color BFD4F2 \
+            --description "Automated upstream ory/kratos-client-rust sync PRs and issues" \
+            --force
+
       - name: Pull upstream's src/apis, src/models, docs, .openapi-generator
         if: steps.check.outputs.has_changes == 'true'
         run: |
