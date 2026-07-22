@@ -17,7 +17,7 @@ pub struct UpdateRecoveryFlowWithLinkMethod {
     /// Sending the anti-csrf token is only required for browser login flows.
     #[serde(rename = "csrf_token", skip_serializing_if = "Option::is_none")]
     pub csrf_token: Option<String>,
-    /// Email to Recover  Needs to be set when initiating the flow. If the email is a registered recovery email, a recovery link will be sent. If the email is not known, a email with details on what happened will be sent instead.  format: email
+    /// Email to Recover  Needs to be set when initiating the flow. If the email is a registered recovery email, a recovery link will be sent. If the email is not known, an email with details on what happened will be sent instead.  format: email
     #[serde(rename = "email")]
     pub email: String,
     /// Method is the method that should be used for this recovery flow  Allowed values are `link` and `code` link RecoveryStrategyLink code RecoveryStrategyCode
