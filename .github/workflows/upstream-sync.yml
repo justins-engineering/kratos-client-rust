@@ -194,7 +194,14 @@ jobs:
           automatically via ci.yml once this PR is opened.
           EOF
           )"
-          git push -u origin "$branch"
+          # Branch name is date-based, so a same-day re-run reuses it: --force
+          # overwrites the previous push (e.g. an orphaned branch from a run that
+          # died before opening its PR), and the guard below reuses an already-open
+          # PR (which the force-push has just updated) instead of erroring on a dup.
+          git push --force -u origin "$branch"
+          if gh pr view "$branch" --json number >/dev/null 2>&1; then
+            echo "PR already open for $branch; force-pushed the updated regen to it, nothing more to do"
+          else
           gh pr create \
             --head "$branch" \
             --title "Upstream sync: ${{ steps.check.outputs.upstream_head }}" \
@@ -220,3 +227,4 @@ jobs:
           like.
           EOF
           )"
+          fi
