@@ -12,7 +12,21 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-#[serde(tag = "node_type")]
+// Work around for https://github.com/ory/kratos-client-rust/issues/3 -- upstream's
+// v26.2.0 generator switched this enum from `untagged` to an internally-tagged
+// `tag = "node_type"` representation. That's broken against a real server response:
+// serde's internally-tagged deserialization consumes the `node_type` key to pick the
+// variant and does NOT hand it back to the variant's own Deserialize impl (see
+// TaggedContentVisitor::visit_map in serde's private/de.rs, which builds the
+// variant's Content from the *other* fields only) -- but each UiNodeXAttributes
+// struct in this same sync also declares its own required `node_type` field, so
+// deserialization then fails with "missing field `node_type`" the moment that
+// struct is deserialized. Confirmed via a live Kratos v25.4/v26.2 verification-flow
+// response (`missing field \`node_type\`` on a real `attributes` object that
+// genuinely has the key) -- reverting to `untagged` here (matching this crate's
+// original fix for the same upstream issue, reported against v0.10.1) restores
+// correct behavior without touching the untouched-elsewhere UiNodeXAttributes structs.
+#[serde(untagged)]
 pub enum UiNodeAttributes {
     #[serde(rename="input")]
     Input(Box<models::UiNodeInputAttributes>),
