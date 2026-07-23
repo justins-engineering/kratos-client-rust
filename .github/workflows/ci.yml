@@ -155,7 +155,24 @@ jobs:
           CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER: wasm-bindgen-test-runner
         run: |
           export CHROMEDRIVER="$CHROMEWEBDRIVER/chromedriver"
-          cargo test --target wasm32-unknown-unknown --test wasm_smoke
+          # ChromeDriver intermittently fails to bind its randomly-chosen
+          # startup port on GitHub runners ("driver failed to bind port during
+          # startup") -- a transient startup race, not a code failure, and one
+          # that clears on a re-attempt essentially every time. Since this test
+          # is #[ignore]'d (see above), the step's only real signal is "the wasm
+          # target compiles and the headless-Chrome harness launches at all", so
+          # retry a few times rather than letting a one-off port race red the
+          # whole build. If Chrome ever becomes reliably (not intermittently)
+          # unlaunchable, this loop fails all 3 attempts and still surfaces it.
+          for attempt in 1 2 3; do
+            if cargo test --target wasm32-unknown-unknown --test wasm_smoke; then
+              exit 0
+            fi
+            echo "::warning::wasm smoke harness attempt ${attempt}/3 failed (likely ChromeDriver port-bind race); retrying..."
+            sleep 5
+          done
+          echo "::error::wasm smoke harness failed all 3 attempts -- not a transient flake"
+          exit 1
 
       # worker feature smoke test: unlike the wasm one, this one is NOT
       # CORS-blocked (CORS is a browser policy; the Workers runtime's own
