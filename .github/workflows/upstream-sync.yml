@@ -50,13 +50,24 @@ jobs:
           git remote add upstream "$UPSTREAM_REPO"
           git fetch upstream master
 
-      # merge-base(HEAD, upstream/master) is the last point our history and
-      # upstream's actually shared -- this fork's whole history is built on
-      # periodically merging upstream's autogen commits in wholesale (see
-      # the task #23 design doc's `upstream` remote finding), so this
-      # naturally identifies "what we last synced from," no separate
-      # bookkeeping file needed.
-      - name: Determine sync base and check for new src/apis changes
+      # Change detection compares OUR CURRENT src/apis CONTENT against upstream
+      # directly -- NOT via merge-base. This fork *mirrors* upstream's src/apis
+      # (+ src/models/docs/.openapi-generator) through a targeted path checkout
+      # (see the "Pull upstream" step); it never `git merge`s upstream's commits,
+      # so merge-base(HEAD, upstream/master) is frozen at the last real merge and
+      # never advances as we sync. A merge-base-based diff therefore reports
+      # "src/apis changed" FOREVER -- re-syncing already-synced content every day,
+      # re-clobbering the src/models node_type fix (upstream #3 workaround), and
+      # opening a duplicate PR each run (this is what let the 2026-07-23 dup PR
+      # spawn). Diffing our working tree's src/apis straight against
+      # upstream/master is the correct signal for a content-mirroring fork: empty
+      # == already in sync, regardless of how many upstream commits sit between
+      # the frozen merge-base and upstream's tip. src/apis is the authoritative
+      # trigger (the only tree the codemod reads); upstream's repo-template/chore
+      # commits that don't touch it are correctly ignored. base/upstream_head are
+      # still emitted purely for the commit-message / PR-body provenance text
+      # below -- they are no longer the trigger.
+      - name: Check whether upstream's src/apis differs from ours
         id: check
         run: |
           base=$(git merge-base HEAD upstream/master)
@@ -64,19 +75,11 @@ jobs:
           echo "base=$base" >> "$GITHUB_OUTPUT"
           echo "upstream_head=$upstream_head" >> "$GITHUB_OUTPUT"
 
-          if [ "$base" = "$upstream_head" ]; then
-            echo "up to date with upstream/master, nothing to sync"
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          # Only src/apis changes matter -- that's the only tree the codemod
-          # reads, and upstream's repo-template/chore commits (which don't
-          # touch it) shouldn't trigger a sync.
-          if git diff --quiet "$base" "$upstream_head" -- src/apis; then
-            echo "upstream has new commits, but none touch src/apis -- nothing to sync"
+          if git diff --quiet HEAD upstream/master -- src/apis; then
+            echo "our src/apis already matches upstream/master -- nothing to sync"
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else
+            echo "src/apis differs from upstream/master -- sync needed"
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
