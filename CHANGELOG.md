@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-07-23
+
+### Changed
+
+- Synced `src/apis`, `src/models`, `docs`, and `.openapi-generator` to upstream
+  ory/kratos-client-rust@86df448 (Kratos client for API v26.2.0), and
+  regenerated `wasm_apis`/`worker_apis` from it via `tools/regen-fetch-apis`.
+
+### Fixed
+
+- `UiNodeAttributes` now deserializes real Kratos responses again. Upstream's
+  v26.2.0 openapi-generator output re-emitted the enum as
+  `#[serde(tag = "node_type")]`, which fails with a "missing field node_type"
+  error: each variant struct also declares a `node_type` field, and serde's
+  internally-tagged representation consumes the discriminator key before the
+  variant can read it. Reverted to `#[serde(untagged)]`, re-applying this
+  fork's standing workaround for upstream #3.
+
+### Internal
+
+- Hardened the scheduled `upstream-sync` workflow and CI: content-based change
+  detection (no longer re-syncs already-synced content off a frozen
+  merge-base), idempotent label creation, `GH_REPO`-pinned `gh` invocations, a
+  PR-state-aware duplicate-PR guard, and a retry around the intermittently
+  port-bind-flaky ChromeDriver wasm smoke test. No public API changes.
+
 ## [0.2.4] - 2026-07-20
 
 ### Added
@@ -185,7 +211,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Cargo.toml info and edition
 
 
-[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.4...master
+[unreleased]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.5...master
+[0.2.5]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/justins-engineering/kratos-client-rust/compare/v0.2.1...v0.2.2
