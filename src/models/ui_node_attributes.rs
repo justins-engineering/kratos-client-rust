@@ -1,7 +1,7 @@
 /*
  * Ory Identities API
  *
- * This is the API specification for Ory Identities with features such as registration, login, recovery, account verification, profile settings, password reset, identity management, session management, email and sms delivery, and more.
+ * This is the API specification for Ory Identities with features such as registration, login, recovery, account verification, profile settings, password reset, identity management, session management, email and sms delivery, and more. 
  *
  * The version of the OpenAPI document: v26.2.0
  * Contact: office@ory.sh
@@ -12,18 +12,17 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-// Work around for https://github.com/ory/kratos-client-rust/issues/3
-#[serde(untagged)]
+#[serde(tag = "node_type")]
 pub enum UiNodeAttributes {
-    #[serde(rename = "input")]
+    #[serde(rename="input")]
     Input(Box<models::UiNodeInputAttributes>),
-    #[serde(rename = "text")]
+    #[serde(rename="text")]
     Text(Box<models::UiNodeTextAttributes>),
-    #[serde(rename = "img")]
+    #[serde(rename="img")]
     Img(Box<models::UiNodeImageAttributes>),
-    #[serde(rename = "a")]
+    #[serde(rename="a")]
     A(Box<models::UiNodeAnchorAttributes>),
-    #[serde(rename = "script")]
+    #[serde(rename="script")]
     Script(Box<models::UiNodeScriptAttributes>),
     #[serde(rename="div")]
     Div(Box<models::UiNodeDivisionAttributes>),
@@ -103,3 +102,4 @@ impl Default for OnloadTriggerEnum {
         Self::OryWebAuthnRegistration
     }
 }
+
