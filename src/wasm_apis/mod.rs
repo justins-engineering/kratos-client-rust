@@ -174,10 +174,12 @@ where
                 "Received `text/plain` content type response that cannot be converted to `{}`",
                 std::any::type_name::<T>()
             )))),
-            ContentType::Unsupported(unknown_type) => Err(Error::from(serde_json::Error::custom(format!(
-                "Received `{unknown_type}` content type response that cannot be converted to `{}`",
-                std::any::type_name::<T>()
-            )))),
+            ContentType::Unsupported(unknown_type) => {
+                Err(Error::from(serde_json::Error::custom(format!(
+                    "Received `{unknown_type}` content type response that cannot be converted to `{}`",
+                    std::any::type_name::<T>()
+                ))))
+            }
             ContentType::Missing => Err(Error::from(serde_json::Error::custom(
                 "Received response that is missing `content-type` header".to_string(),
             ))),
