@@ -83,8 +83,37 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Ensure the upstream-sync label exists
+      # The "Commit regenerated trees and open a PR" step below already guards
+      # against re-creating a PR for the SAME date branch on a same-day
+      # re-run. That's not enough across a date rollover: this job runs once
+      # a day, branches are date-named (upstream-sync/YYYY-MM-DD), and an
+      # unmerged sync PR left open overnight still has content differing
+      # from upstream (the content-diff check above only goes quiet once a
+      # PR MERGES) -- so tomorrow's run sees has_changes=true again and, with
+      # nothing else stopping it, opens a second PR for the same
+      # upstream_head under tomorrow's date branch. This is exactly what
+      # produced PRs #14/#15. Guard on the upstream_head embedded in every
+      # sync PR's title ("Upstream sync: <sha>", set below) across ALL open
+      # upstream-sync-labeled PRs, not just today's branch name.
+      - name: Check for an already-open sync PR for this upstream head
+        id: dup_check
         if: steps.check.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          upstream_head="${{ steps.check.outputs.upstream_head }}"
+          existing=$(gh pr list --label upstream-sync --state open \
+            --json number,title \
+            --jq ".[] | select(.title | contains(\"$upstream_head\")) | .number" | head -1)
+          if [ -n "$existing" ]; then
+            echo "PR #$existing is already open for upstream head $upstream_head (on a prior day's date-branch) -- skipping, nothing new to sync"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ensure the upstream-sync label exists
+        if: steps.check.outputs.has_changes == 'true' && steps.dup_check.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -96,7 +125,7 @@ jobs:
             --force
 
       - name: Pull upstream's src/apis, src/models, docs, .openapi-generator
-        if: steps.check.outputs.has_changes == 'true'
+        if: steps.check.outputs.has_changes == 'true' && steps.dup_check.outputs.skip != 'true'
         run: |
           git checkout upstream/master -- src/apis src/models docs .openapi-generator
           git config user.name "github-actions[bot]"
@@ -116,13 +145,71 @@ jobs:
           these directories are genuinely upstream's content; see the
           task #23 design doc).
 
-          Next commit (if this workflow gets that far): regenerate
-          wasm_apis/worker_apis from this via tools/regen-fetch-apis.
+          Next commits (if this workflow gets that far): re-apply the
+          UiNodeAttributes untagged fix (upstream #3) that this pull just
+          re-clobbered, then regenerate wasm_apis/worker_apis via
+          tools/regen-fetch-apis.
+          EOF
+          )"
+
+      # The pull above overwrites src/models wholesale from upstream, which
+      # re-clobbers this fork's standing fix for upstream #3 (see PR #14 /
+      # CHANGELOG 0.2.5) every time upstream regenerates it -- confirmed
+      # still present at upstream/master as of this workflow version, i.e.
+      # this isn't hypothetical, it fires on every sync until upstream fixes
+      # #3 for good. patches/ui-node-attributes-untagged.patch is a plain
+      # `diff -u` from upstream's tagged shape to this fork's untagged fix
+      # (regenerate it the same way if this ever needs updating -- see the
+      # patch's own header). `git apply` only lands cleanly if the file's
+      # surrounding context still matches; if upstream has changed this
+      # enum's shape enough that it doesn't, this step fails loudly instead
+      # of silently leaving the tagged (broken) version in place. The grep
+      # afterward is a second, independent check of the same fact, in case
+      # the patch ever applied "successfully" against a shape where that
+      # doesn't mean what we think it means.
+      #
+      # Placed before regen/build so every step downstream of here -- the
+      # compile check, the PR diff, CI on the PR -- reflects the final,
+      # correct tree, not the momentarily-clobbered one.
+      - name: Re-apply UiNodeAttributes untagged fix (upstream #3)
+        if: steps.check.outputs.has_changes == 'true' && steps.dup_check.outputs.skip != 'true'
+        run: |
+          f=src/models/ui_node_attributes.rs
+
+          if ! git apply --verbose patches/ui-node-attributes-untagged.patch; then
+            echo "::error::patches/ui-node-attributes-untagged.patch did not apply -- upstream's $f has drifted further than a straight re-apply can handle. This needs a human to look at the new upstream shape and refresh the patch (see the patch file's own comments); NOT safe to auto-continue with the tagged (broken) version in place."
+            exit 1
+          fi
+
+          if grep -qF '#[serde(tag = "node_type")]' "$f"; then
+            echo "::error::$f still contains the broken tagged attribute after patch apply -- the patch applied to the wrong spot or upstream duplicated this shape elsewhere in the file. Refusing to continue."
+            exit 1
+          fi
+          if ! grep -qF '#[serde(untagged)]' "$f"; then
+            echo "::error::$f is missing #[serde(untagged)] after patch apply -- re-apply silently no-opped somehow. Refusing to continue."
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$f"
+          git commit -m "$(cat <<EOF
+          fix(models): re-apply UiNodeAttributes untagged fix (upstream #3)
+
+          The sync in the previous commit overwrote src/models wholesale from
+          upstream, which re-clobbers this fork's standing workaround for
+          https://github.com/ory/kratos-client-rust/issues/3 (upstream emits
+          UiNodeAttributes with #[serde(tag = "node_type")], which fails to
+          deserialize real Kratos responses -- see CHANGELOG 0.2.5 / PR #14
+          for the full explanation). Re-applied via
+          patches/ui-node-attributes-untagged.patch and verified via grep
+          that the tagged form is gone and untagged is back, so this can't
+          silently regress again.
           EOF
           )"
 
       - name: Regenerate wasm_apis/worker_apis
-        if: steps.check.outputs.has_changes == 'true'
+        if: steps.check.outputs.has_changes == 'true' && steps.dup_check.outputs.skip != 'true'
         id: regen
         run: |
           set +e
@@ -156,7 +243,7 @@ jobs:
       # PR with half-regenerated or wrong code -- file an issue naming the
       # panic, and fail the job so it's visible in the Actions tab too.
       - name: File an issue if the codemod failed
-        if: steps.check.outputs.has_changes == 'true' && steps.regen.outputs.failed == 'true'
+        if: steps.check.outputs.has_changes == 'true' && steps.dup_check.outputs.skip != 'true' && steps.regen.outputs.failed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -188,7 +275,7 @@ jobs:
           exit 1
 
       - name: Build sanity check (wasm + worker + reqwest, compile only)
-        if: steps.check.outputs.has_changes == 'true' && steps.regen.outputs.failed == 'false'
+        if: steps.check.outputs.has_changes == 'true' && steps.dup_check.outputs.skip != 'true' && steps.regen.outputs.failed == 'false'
         run: |
           cargo build --target wasm32-unknown-unknown
           cargo build --target wasm32-unknown-unknown --no-default-features --features worker
@@ -200,7 +287,7 @@ jobs:
       # suite against it automatically. This job only needs to prove the
       # regenerated code compiles before asking for review.
       - name: Commit regenerated trees and open a PR
-        if: steps.check.outputs.has_changes == 'true' && steps.regen.outputs.failed == 'false'
+        if: steps.check.outputs.has_changes == 'true' && steps.dup_check.outputs.skip != 'true' && steps.regen.outputs.failed == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

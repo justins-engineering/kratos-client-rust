@@ -1,0 +1,44 @@
+# Re-applies this fork's standing workaround for
+# https://github.com/ory/kratos-client-rust/issues/3 after the upstream-sync
+# workflow's "Pull upstream's src/apis..." step overwrites src/models
+# wholesale from upstream (which re-clobbers this fix every time, since
+# upstream's own generator output hasn't changed -- see CHANGELOG 0.2.5 and
+# PR #14 for the original hand-revert this automates).
+#
+# Applied with: git apply patches/ui-node-attributes-untagged.patch
+#
+# To regenerate this file if it ever stops applying cleanly (upstream changed
+# the enum's shape further):
+#   git show upstream/master:src/models/ui_node_attributes.rs > /tmp/clobbered.rs
+#   git show HEAD:src/models/ui_node_attributes.rs > /tmp/fixed.rs
+#   diff -u --label a/src/models/ui_node_attributes.rs \
+#           --label b/src/models/ui_node_attributes.rs \
+#           /tmp/clobbered.rs /tmp/fixed.rs > patches/ui-node-attributes-untagged.patch
+# ...then hand-check the new upstream shape still only needs the
+# tag->untagged swap; if it needs more than that, update the fix in
+# src/models/ui_node_attributes.rs first and regenerate from that.
+--- a/src/models/ui_node_attributes.rs
++++ b/src/models/ui_node_attributes.rs
+@@ -12,7 +12,21 @@
+ use serde::{Deserialize, Serialize};
+
+ #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+-#[serde(tag = "node_type")]
++// Work around for https://github.com/ory/kratos-client-rust/issues/3 -- upstream's
++// v26.2.0 generator switched this enum from `untagged` to an internally-tagged
++// `tag = "node_type"` representation. That's broken against a real server response:
++// serde's internally-tagged deserialization consumes the `node_type` key to pick the
++// variant and does NOT hand it back to the variant's own Deserialize impl (see
++// TaggedContentVisitor::visit_map in serde's private/de.rs, which builds the
++// variant's Content from the *other* fields only) -- but each UiNodeXAttributes
++// struct in this same sync also declares its own required `node_type` field, so
++// deserialization then fails with "missing field `node_type`" the moment that
++// struct is deserialized. Confirmed via a live Kratos v25.4/v26.2 verification-flow
++// response (`missing field \`node_type\`` on a real `attributes` object that
++// genuinely has the key) -- reverting to `untagged` here (matching this crate's
++// original fix for the same upstream issue, reported against v0.10.1) restores
++// correct behavior without touching the untouched-elsewhere UiNodeXAttributes structs.
++#[serde(untagged)]
+ pub enum UiNodeAttributes {
+     #[serde(rename="input")]
+     Input(Box<models::UiNodeInputAttributes>),
